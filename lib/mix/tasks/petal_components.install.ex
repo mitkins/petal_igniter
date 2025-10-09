@@ -39,6 +39,13 @@ if Code.ensure_loaded?(Igniter) do
 
     use Igniter.Mix.Task
 
+    @components [
+      %{module: Loading, file: "loading.ex", test_file: "loading_test.exs"},
+      %{module: Link, file: "link.ex", test_file: "link_test.exs"},
+      %{module: Icon, file: "icon.ex", test_file: "icon_test.exs"},
+      %{module: Button, file: "button.ex", test_file: "button_test.exs"}
+    ]
+
     @impl Igniter.Mix.Task
     def info(_argv, _composing_task) do
       %Igniter.Mix.Task.Info{
@@ -99,65 +106,32 @@ if Code.ensure_loaded?(Igniter) do
       |> Igniter.compose_task("petal.heroicons.install")
       |> Igniter.compose_task("petal.tailwind.install")
       |> Igniter.compose_task("petal_components.css.install")
-      |> generate_loading_component(component_templates_folder, base_module)
-      |> generate_link_component(component_templates_folder, base_module)
-      |> generate_icon_component(component_templates_folder, base_module)
-      |> generate_button_component(component_templates_folder, base_module)
+      |> reduce_into(@components, fn component, igniter ->
+        generate_component(
+          igniter,
+          component_templates_folder,
+          base_module,
+          component.module,
+          component.file
+        )
+      end)
       |> generate_component_case(test_templates_folder, base_module)
-      |> generate_loading_test(test_templates_folder, base_module)
-      |> generate_link_test(test_templates_folder, base_module)
-      |> generate_icon_test(test_templates_folder, base_module)
-      |> generate_button_test(test_templates_folder, base_module)
+      |> reduce_into(@components, fn component, igniter ->
+        generate_test(
+          igniter,
+          test_templates_folder,
+          base_module,
+          component.module,
+          component.test_file
+        )
+      end)
     end
 
-    defp generate_loading_component(igniter, component_templates_folder, base_module) do
-      component_template = Path.join(component_templates_folder, "loading.ex")
-      component_module = Module.concat(base_module, Loading)
-      component_path = Igniter.Project.Module.proper_location(igniter, component_module)
+    defp reduce_into(igniter, enumerable, fun), do: Enum.reduce(enumerable, igniter, fun)
 
-      # Seems cleaner than Atom.to_string(base_nodule) |> String.replace("Elixir.", "")
-      module_prefix =
-        base_module
-        |> Module.split()
-        |> Enum.join(".")
-
-      igniter
-      |> Igniter.copy_template(component_template, component_path, module_prefix: module_prefix)
-    end
-
-    defp generate_link_component(igniter, component_templates_folder, base_module) do
-      component_template = Path.join(component_templates_folder, "link.ex")
-      component_module = Module.concat(base_module, Link)
-      component_path = Igniter.Project.Module.proper_location(igniter, component_module)
-
-      # Seems cleaner than Atom.to_string(base_nodule) |> String.replace("Elixir.", "")
-      module_prefix =
-        base_module
-        |> Module.split()
-        |> Enum.join(".")
-
-      igniter
-      |> Igniter.copy_template(component_template, component_path, module_prefix: module_prefix)
-    end
-
-    defp generate_icon_component(igniter, component_templates_folder, base_module) do
-      component_template = Path.join(component_templates_folder, "icon.ex")
-      component_module = Module.concat(base_module, Icon)
-      component_path = Igniter.Project.Module.proper_location(igniter, component_module)
-
-      # Seems cleaner than Atom.to_string(base_nodule) |> String.replace("Elixir.", "")
-      module_prefix =
-        base_module
-        |> Module.split()
-        |> Enum.join(".")
-
-      igniter
-      |> Igniter.copy_template(component_template, component_path, module_prefix: module_prefix)
-    end
-
-    defp generate_button_component(igniter, component_templates_folder, base_module) do
-      component_template = Path.join(component_templates_folder, "button.ex")
-      component_module = Module.concat(base_module, Button)
+    defp generate_component(igniter, component_templates_folder, base_module, module_name, file) do
+      component_template = Path.join(component_templates_folder, file)
+      component_module = Module.concat(base_module, module_name)
       component_path = Igniter.Project.Module.proper_location(igniter, component_module)
 
       # Seems cleaner than Atom.to_string(base_nodule) |> String.replace("Elixir.", "")
@@ -185,54 +159,9 @@ if Code.ensure_loaded?(Igniter) do
       |> Igniter.copy_template(test_template, test_path, module_prefix: module_prefix)
     end
 
-    defp generate_loading_test(igniter, test_templates_folder, base_module) do
-      test_template = Path.join(test_templates_folder, "loading_test.exs")
-      test_module = Module.concat(base_module, LoadingTest)
-      test_path = Igniter.Project.Module.proper_location(igniter, test_module, :test)
-
-      # Seems cleaner than Atom.to_string(base_nodule) |> String.replace("Elixir.", "")
-      module_prefix =
-        base_module
-        |> Module.split()
-        |> Enum.join(".")
-
-      igniter
-      |> Igniter.copy_template(test_template, test_path, module_prefix: module_prefix)
-    end
-
-    defp generate_link_test(igniter, test_templates_folder, base_module) do
-      test_template = Path.join(test_templates_folder, "link_test.exs")
-      test_module = Module.concat(base_module, LinkTest)
-      test_path = Igniter.Project.Module.proper_location(igniter, test_module, :test)
-
-      # Seems cleaner than Atom.to_string(base_nodule) |> String.replace("Elixir.", "")
-      module_prefix =
-        base_module
-        |> Module.split()
-        |> Enum.join(".")
-
-      igniter
-      |> Igniter.copy_template(test_template, test_path, module_prefix: module_prefix)
-    end
-
-    defp generate_icon_test(igniter, test_templates_folder, base_module) do
-      test_template = Path.join(test_templates_folder, "icon_test.exs")
-      test_module = Module.concat(base_module, IconTest)
-      test_path = Igniter.Project.Module.proper_location(igniter, test_module, :test)
-
-      # Seems cleaner than Atom.to_string(base_nodule) |> String.replace("Elixir.", "")
-      module_prefix =
-        base_module
-        |> Module.split()
-        |> Enum.join(".")
-
-      igniter
-      |> Igniter.copy_template(test_template, test_path, module_prefix: module_prefix)
-    end
-
-    defp generate_button_test(igniter, test_templates_folder, base_module) do
-      test_template = Path.join(test_templates_folder, "button_test.exs")
-      test_module = Module.concat(base_module, ButtonTest)
+    defp generate_test(igniter, test_templates_folder, base_module, module_name, file) do
+      test_template = Path.join(test_templates_folder, file)
+      test_module = Module.concat(base_module, module_name)
       test_path = Igniter.Project.Module.proper_location(igniter, test_module, :test)
 
       # Seems cleaner than Atom.to_string(base_nodule) |> String.replace("Elixir.", "")
