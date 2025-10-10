@@ -84,19 +84,13 @@ if Code.ensure_loaded?(Igniter) do
           |> Module.concat(Components.PetalComponents)
         end
 
-      components = PetalIgniter.Components.list()
+      tests = PetalIgniter.Components.tests()
 
       # Do your work here and return an updated igniter
       igniter
       |> generate_component_case(test_templates_folder, base_module)
-      |> reduce_into(components, fn component, igniter ->
-        generate_test(
-          igniter,
-          test_templates_folder,
-          base_module,
-          component.module,
-          component.test_file
-        )
+      |> reduce_into(tests, fn {module, test_file}, igniter ->
+        generate_test(igniter, test_templates_folder, base_module, module, test_file)
       end)
     end
 

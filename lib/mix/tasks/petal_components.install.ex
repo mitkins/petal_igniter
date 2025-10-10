@@ -89,7 +89,7 @@ if Code.ensure_loaded?(Igniter) do
           |> Module.concat(Components.PetalComponents)
         end
 
-      components = PetalIgniter.Components.list()
+      components = PetalIgniter.Components.components()
 
       # Do your work here and return an updated igniter
       igniter
@@ -99,14 +99,8 @@ if Code.ensure_loaded?(Igniter) do
       |> Igniter.compose_task("petal.heroicons.install")
       |> Igniter.compose_task("petal.tailwind.install")
       |> Igniter.compose_task("petal_components.css.install")
-      |> reduce_into(components, fn component, igniter ->
-        generate_component(
-          igniter,
-          component_templates_folder,
-          base_module,
-          component.module,
-          component.file
-        )
+      |> reduce_into(components, fn {module, file}, igniter ->
+        generate_component(igniter, component_templates_folder, base_module, module, file)
       end)
       |> Igniter.compose_task("petal_components.test.install")
     end
