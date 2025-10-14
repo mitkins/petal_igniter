@@ -87,6 +87,8 @@ if Code.ensure_loaded?(Igniter) do
           "assets/css/petal_components.css"
         end
 
+      css_files = PetalIgniter.Components.css_files()
+
       # Do your work here and return an updated igniter
       igniter
       |> then(fn igniter ->
@@ -100,10 +102,13 @@ if Code.ensure_loaded?(Igniter) do
         end
       end)
       |> Igniter.copy_template(default_css_template, default_css_path, nil)
-      |> generate_loading_css(css_templates_folder, default_css_path)
-      |> generate_button_css(css_templates_folder, default_css_path)
+      |> reduce_into(css_files, fn css_file, igniter ->
+        generate_css(igniter, css_templates_folder, default_css_path, css_file)
+      end)
       |> remove_marker_from_css_file(default_css_path, @marker)
     end
+
+    defp reduce_into(igniter, enumerable, fun), do: Enum.reduce(enumerable, igniter, fun)
 
     defp inject_into_css_file(igniter, css_path, marker, content) do
       igniter
@@ -158,20 +163,11 @@ if Code.ensure_loaded?(Igniter) do
       end)
     end
 
-    defp generate_loading_css(igniter, css_templates_folder, css_path) do
-      css_template = Path.join(css_templates_folder, "loading.css")
+    defp generate_css(igniter, css_templates_folder, css_path, css_file) do
+      css_template = Path.join(css_templates_folder, css_file)
       css_content = EEx.eval_file(css_template, [])
 
-      igniter
-      |> inject_into_css_file(css_path, @marker, css_content)
-    end
-
-    defp generate_button_css(igniter, css_templates_folder, css_path) do
-      css_template = Path.join(css_templates_folder, "button.css")
-      css_content = EEx.eval_file(css_template, [])
-
-      igniter
-      |> inject_into_css_file(css_path, @marker, css_content)
+      inject_into_css_file(igniter, css_path, @marker, css_content)
     end
   end
 else

@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.PetalComponents.Install.Docs do
+defmodule Mix.Tasks.PetalComponents.Test.Install.Docs do
   @moduledoc false
 
   @spec short_doc() :: String.t()
@@ -32,7 +32,7 @@ defmodule Mix.Tasks.PetalComponents.Install.Docs do
 end
 
 if Code.ensure_loaded?(Igniter) do
-  defmodule Mix.Tasks.PetalComponents.Install do
+  defmodule Mix.Tasks.PetalComponents.Test.Install do
     @shortdoc "#{__MODULE__.Docs.short_doc()}"
 
     @moduledoc __MODULE__.Docs.long_doc()
@@ -59,12 +59,7 @@ if Code.ensure_loaded?(Igniter) do
         positional: [],
         # Other tasks your task composes using `Igniter.compose_task`, passing in the CLI argv
         # This ensures your option schema includes options from nested tasks
-        composes: [
-          "petal.heroicons.install",
-          "petal.tailwind.install",
-          "petal_components.css.install",
-          "petal_components.test.install"
-        ],
+        composes: [],
         # `OptionParser` schema
         schema: [lib: :boolean],
         # Default values for the options in the `schema`
@@ -78,8 +73,8 @@ if Code.ensure_loaded?(Igniter) do
 
     @impl Igniter.Mix.Task
     def igniter(igniter) do
-      component_templates_folder =
-        Igniter.Project.Application.priv_dir(igniter, ["templates", "component"])
+      test_templates_folder =
+        Igniter.Project.Application.priv_dir(igniter, ["templates", "test"])
 
       base_module =
         if igniter.args.options[:lib] do
@@ -89,28 +84,22 @@ if Code.ensure_loaded?(Igniter) do
           |> Module.concat(Components.PetalComponents)
         end
 
-      components = PetalIgniter.Components.components()
+      tests = PetalIgniter.Components.tests()
 
       # Do your work here and return an updated igniter
       igniter
-      |> Igniter.Project.Deps.add_dep({:phoenix, "~> 1.7"})
-      |> Igniter.Project.Deps.add_dep({:phoenix_live_view, "~> 1.0"})
-      |> Igniter.Project.Deps.add_dep({:lazy_html, ">= 0.0.0", only: :test})
-      |> Igniter.compose_task("petal.heroicons.install")
-      |> Igniter.compose_task("petal.tailwind.install")
-      |> Igniter.compose_task("petal_components.css.install")
-      |> reduce_into(components, fn {module, file}, igniter ->
-        generate_component(igniter, component_templates_folder, base_module, module, file)
+      |> generate_component_case(test_templates_folder, base_module)
+      |> reduce_into(tests, fn {module, test_file}, igniter ->
+        generate_test(igniter, test_templates_folder, base_module, module, test_file)
       end)
-      |> Igniter.compose_task("petal_components.test.install")
     end
 
     defp reduce_into(igniter, enumerable, fun), do: Enum.reduce(enumerable, igniter, fun)
 
-    defp generate_component(igniter, component_templates_folder, base_module, module_name, file) do
-      component_template = Path.join(component_templates_folder, file)
-      component_module = Module.concat(base_module, module_name)
-      component_path = Igniter.Project.Module.proper_location(igniter, component_module)
+    defp generate_component_case(igniter, test_templates_folder, base_module) do
+      test_template = Path.join(test_templates_folder, "_component_case.ex")
+      # test_module = Module.concat(base_module, ComponentCase)
+      test_path = "test/support/component_case.ex"
 
       # Seems cleaner than Atom.to_string(base_nodule) |> String.replace("Elixir.", "")
       module_prefix =
@@ -119,11 +108,26 @@ if Code.ensure_loaded?(Igniter) do
         |> Enum.join(".")
 
       igniter
-      |> Igniter.copy_template(component_template, component_path, module_prefix: module_prefix)
+      |> Igniter.copy_template(test_template, test_path, module_prefix: module_prefix)
+    end
+
+    defp generate_test(igniter, test_templates_folder, base_module, module_name, file) do
+      test_template = Path.join(test_templates_folder, file)
+      test_module = Module.concat(base_module, module_name)
+      test_path = Igniter.Project.Module.proper_location(igniter, test_module, :test)
+
+      # Seems cleaner than Atom.to_string(base_nodule) |> String.replace("Elixir.", "")
+      module_prefix =
+        base_module
+        |> Module.split()
+        |> Enum.join(".")
+
+      igniter
+      |> Igniter.copy_template(test_template, test_path, module_prefix: module_prefix)
     end
   end
 else
-  defmodule Mix.Tasks.PetalComponents.Install do
+  defmodule Mix.Tasks.PetalComponents.Test.Install do
     @shortdoc "#{__MODULE__.Docs.short_doc()} | Install `igniter` to use"
 
     @moduledoc __MODULE__.Docs.long_doc()
