@@ -1,3 +1,7 @@
 @layer components {
-  /* Igniter: Components */
+<%=
+  Enum.map(@css_files, fn css_file ->
+    String.replace(css_file, ~r/^/m, " ")
+  end)
+%>
 }

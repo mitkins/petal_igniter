@@ -37,7 +37,7 @@ if Code.ensure_loaded?(Igniter) do
 
     @moduledoc __MODULE__.Docs.long_doc()
 
-    @marker "/* Igniter: Components */"
+    # @marker "/* Petal Components */"
 
     use Igniter.Mix.Task
 
@@ -87,7 +87,12 @@ if Code.ensure_loaded?(Igniter) do
           "assets/css/petal_components.css"
         end
 
-      css_files = PetalIgniter.Components.css_files()
+      css_files =
+        PetalIgniter.Components.css_files()
+        |> Enum.map(fn css_file ->
+          Path.join(css_templates_folder, css_file)
+          |> EEx.eval_file([])
+        end)
 
       # Do your work here and return an updated igniter
       igniter
@@ -101,74 +106,68 @@ if Code.ensure_loaded?(Igniter) do
           Igniter.copy_template(igniter, colors_css_template, colors_css_path, nil)
         end
       end)
-      |> Igniter.copy_template(default_css_template, default_css_path, nil)
-      |> reduce_into(css_files, fn css_file, igniter ->
-        generate_css(igniter, css_templates_folder, default_css_path, css_file)
-      end)
-      |> remove_marker_from_css_file(default_css_path, @marker)
+      |> Igniter.copy_template(default_css_template, default_css_path, css_files: css_files)
     end
 
-    defp reduce_into(igniter, enumerable, fun), do: Enum.reduce(enumerable, igniter, fun)
+    # defp inject_into_css_file(igniter, css_path, marker, content) do
+    #   igniter
+    #   |> Igniter.update_file(css_path, fn source ->
+    #     existing_content = Rewrite.Source.get(source, :content)
 
-    defp inject_into_css_file(igniter, css_path, marker, content) do
-      igniter
-      |> Igniter.update_file(css_path, fn source ->
-        existing_content = Rewrite.Source.get(source, :content)
+    #     escaped_marker = Regex.escape(marker)
 
-        escaped_marker = Regex.escape(marker)
+    #     marker_line =
+    #       case Regex.run(~r/^.*#{escaped_marker}.*$/m, existing_content) do
+    #         [line] -> line
+    #         nil -> ""
+    #       end
 
-        marker_line =
-          case Regex.run(~r/^.*#{escaped_marker}.*$/m, existing_content) do
-            [line] -> line
-            nil -> ""
-          end
+    #     indentation =
+    #       case Regex.run(~r/^(\s*)/, marker_line, capture: :all_but_first) do
+    #         [indentation] -> indentation
+    #         _ -> ""
+    #       end
 
-        indentation =
-          case Regex.run(~r/^(\s*)/, marker_line, capture: :all_but_first) do
-            [indentation] -> indentation
-            _ -> ""
-          end
+    #     indented_content = String.replace(content, ~r/^/m, indentation)
 
-        indented_content = String.replace(content, ~r/^/m, indentation)
+    #     # Replace the first instance of the marker with content and another marker
+    #     new_content =
+    #       String.replace(existing_content, marker_line, indented_content <> marker_line,
+    #         global: false
+    #       )
 
-        # Replace the first instance of the marker with content and another marker
-        new_content =
-          String.replace(existing_content, marker_line, indented_content <> marker_line,
-            global: false
-          )
+    #     Rewrite.Source.update(source, :content, new_content)
+    #   end)
+    # end
 
-        Rewrite.Source.update(source, :content, new_content)
-      end)
-    end
+    # defp remove_marker_from_css_file(igniter, css_path, marker) do
+    #   igniter
+    #   |> Igniter.update_file(css_path, fn source ->
+    #     existing_content = Rewrite.Source.get(source, :content)
 
-    defp remove_marker_from_css_file(igniter, css_path, marker) do
-      igniter
-      |> Igniter.update_file(css_path, fn source ->
-        existing_content = Rewrite.Source.get(source, :content)
+    #     escaped_marker = Regex.escape(marker)
 
-        escaped_marker = Regex.escape(marker)
+    #     marker_line =
+    #       case Regex.run(~r/^.*#{escaped_marker}.*$/m, existing_content) do
+    #         [line] -> line
+    #         nil -> ""
+    #       end
 
-        marker_line =
-          case Regex.run(~r/^.*#{escaped_marker}.*$/m, existing_content) do
-            [line] -> line
-            nil -> ""
-          end
+    #     escaped_marker_line = Regex.escape(marker_line)
 
-        escaped_marker_line = Regex.escape(marker_line)
+    #     new_content =
+    #       String.replace(existing_content, ~r/#{escaped_marker_line}\r?\n?/m, "", global: false)
 
-        new_content =
-          String.replace(existing_content, ~r/#{escaped_marker_line}\r?\n?/m, "", global: false)
+    #     Rewrite.Source.update(source, :content, new_content)
+    #   end)
+    # end
 
-        Rewrite.Source.update(source, :content, new_content)
-      end)
-    end
+    # defp generate_css(igniter, css_templates_folder, css_path, css_file) do
+    #   css_template = Path.join(css_templates_folder, css_file)
+    #   css_content = EEx.eval_file(css_template, [])
 
-    defp generate_css(igniter, css_templates_folder, css_path, css_file) do
-      css_template = Path.join(css_templates_folder, css_file)
-      css_content = EEx.eval_file(css_template, [])
-
-      inject_into_css_file(igniter, css_path, @marker, css_content)
-    end
+    #   inject_into_css_file(igniter, css_path, @marker, css_content)
+    # end
   end
 else
   defmodule Mix.Tasks.PetalComponents.Css.Install do
