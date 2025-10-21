@@ -8,7 +8,7 @@ defmodule Mix.Tasks.PetalComponents.Css.Install.Docs do
 
   @spec example() :: String.t()
   def example do
-    "mix petal_css.install --example arg"
+    "mix petal_components.css.install --example arg"
   end
 
   @spec long_doc() :: String.t()
@@ -37,7 +37,7 @@ if Code.ensure_loaded?(Igniter) do
 
     @moduledoc __MODULE__.Docs.long_doc()
 
-    @marker "/* Igniter: Components */"
+    @app_css "assets/css/app.css"
 
     use Igniter.Mix.Task
 
@@ -79,95 +79,84 @@ if Code.ensure_loaded?(Igniter) do
         Igniter.Project.Application.priv_dir(igniter, ["templates", "css"])
 
       default_css_template = Path.join(css_templates_folder, "_default.css")
+      colors_css_template = Path.join(css_templates_folder, "_colors.css")
 
-      default_css_path =
-        if igniter.args.options[:lib] do
-          "assets/css/default.css"
-        else
-          "assets/css/petal_components.css"
-        end
+      css_files =
+        PetalIgniter.Components.css_files()
+        |> Enum.map(fn css_file ->
+          css_template = Path.join(css_templates_folder, css_file)
 
-      css_files = PetalIgniter.Components.css_files()
+          EEx.eval_file(css_template, [])
+        end)
 
       # Do your work here and return an updated igniter
-      igniter
-      |> then(fn igniter ->
-        if igniter.args.options[:lib] do
-          igniter
-        else
-          colors_css_template = Path.join(css_templates_folder, "_colors.css")
-          colors_css_path = "assets/css/colors.css"
+      if igniter.args.options[:lib] do
+        igniter
+        |> Igniter.copy_template(default_css_template, "assets/css/default.css",
+          css_files: css_files
+        )
+      else
+        igniter
+        |> Igniter.copy_template(default_css_template, "assets/css/petal_components.css",
+          css_files: css_files
+        )
+        |> Igniter.copy_template(colors_css_template, "assets/css/colors.css", [])
+        |> then(fn igniter ->
+          if Igniter.exists?(igniter, @app_css) do
+            igniter
+            |> maybe_add_import(@app_css, "assets/css/petal_components.css")
+            |> maybe_add_import(@app_css, "assets/css/colors.css")
+          else
+            Igniter.add_warning(igniter, "Could not find #{@app_css}. Skipping CSS imports.")
+          end
+        end)
+      end
+    end
 
-          Igniter.copy_template(igniter, colors_css_template, colors_css_path, nil)
+    defp maybe_add_import(igniter, css_path, import) do
+      escaped_import = Regex.escape(import)
+
+      igniter
+      |> Igniter.update_file(css_path, fn source ->
+        content = Rewrite.Source.get(source, :content)
+
+        if String.match?(content, ~r/@import\s+["']?#{escaped_import}["']?;/) do
+          source
+        else
+          new_content = add_import(content, import)
+
+          Rewrite.Source.update(source, :content, new_content)
         end
       end)
-      |> Igniter.copy_template(default_css_template, default_css_path, nil)
-      |> reduce_into(css_files, fn css_file, igniter ->
-        generate_css(igniter, css_templates_folder, default_css_path, css_file)
-      end)
-      |> remove_marker_from_css_file(default_css_path, @marker)
     end
 
-    defp reduce_into(igniter, enumerable, fun), do: Enum.reduce(enumerable, igniter, fun)
+    defp add_import(content, import) do
+      import_statement = "@import \"#{import}\";"
 
-    defp inject_into_css_file(igniter, css_path, marker, content) do
-      igniter
-      |> Igniter.update_file(css_path, fn source ->
-        existing_content = Rewrite.Source.get(source, :content)
+      # Find all existing @import statements
+      import_regex = ~r/^@import\s+[^;]+;/m
 
-        escaped_marker = Regex.escape(marker)
-
-        marker_line =
-          case Regex.run(~r/^.*#{escaped_marker}.*$/m, existing_content) do
-            [line] -> line
-            nil -> ""
+      case Regex.run(import_regex, content, return: :index) do
+        nil ->
+          # No existing imports, add at the beginning
+          if String.trim(content) == "" do
+            import_statement <> "\n"
+          else
+            import_statement <> "\n\n" <> content
           end
 
-        indentation =
-          case Regex.run(~r/^(\s*)/, marker_line, capture: :all_but_first) do
-            [indentation] -> indentation
-            _ -> ""
-          end
+        _ ->
+          # Find the last import statement
+          matches = Regex.scan(import_regex, content, return: :index)
+          {last_start, last_length} = List.last(matches) |> hd()
+          last_end = last_start + last_length
 
-        indented_content = String.replace(content, ~r/^/m, indentation)
+          # Insert after the last import
+          before_import = String.slice(content, 0, last_end)
+          after_import = String.slice(content, last_end, String.length(content))
 
-        # Replace the first instance of the marker with content and another marker
-        new_content =
-          String.replace(existing_content, marker_line, indented_content <> marker_line,
-            global: false
-          )
-
-        Rewrite.Source.update(source, :content, new_content)
-      end)
-    end
-
-    defp remove_marker_from_css_file(igniter, css_path, marker) do
-      igniter
-      |> Igniter.update_file(css_path, fn source ->
-        existing_content = Rewrite.Source.get(source, :content)
-
-        escaped_marker = Regex.escape(marker)
-
-        marker_line =
-          case Regex.run(~r/^.*#{escaped_marker}.*$/m, existing_content) do
-            [line] -> line
-            nil -> ""
-          end
-
-        escaped_marker_line = Regex.escape(marker_line)
-
-        new_content =
-          String.replace(existing_content, ~r/#{escaped_marker_line}\r?\n?/m, "", global: false)
-
-        Rewrite.Source.update(source, :content, new_content)
-      end)
-    end
-
-    defp generate_css(igniter, css_templates_folder, css_path, css_file) do
-      css_template = Path.join(css_templates_folder, css_file)
-      css_content = EEx.eval_file(css_template, [])
-
-      inject_into_css_file(igniter, css_path, @marker, css_content)
+          before_import <> "\n" <> import_statement <> after_import
+      end
     end
   end
 else
