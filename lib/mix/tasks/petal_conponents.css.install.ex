@@ -104,8 +104,8 @@ if Code.ensure_loaded?(Igniter) do
         |> then(fn igniter ->
           if Igniter.exists?(igniter, @app_css) do
             igniter
-            |> maybe_add_import(@app_css, "assets/css/petal_components.css")
-            |> maybe_add_import(@app_css, "assets/css/colors.css")
+            |> maybe_add_import(@app_css, "./petal_components.css")
+            |> maybe_add_import(@app_css, "./colors.css")
           else
             Igniter.add_warning(igniter, "Could not find #{@app_css}. Skipping CSS imports.")
           end
