@@ -85,37 +85,19 @@ if Code.ensure_loaded?(Igniter) do
 
         web_module = Igniter.Libs.Phoenix.web_module(igniter)
         components_module = Module.concat(web_module, Components)
-        petal_module = Module.concat(components_module, PetalComponents)
+        petal_module = Module.concat(web_module, Components.PetalComponents)
+
+        petal_components_template = Path.join(component_templates_folder, "_petal_components.ex")
+        petal_components_path = Igniter.Project.Module.proper_location(igniter, petal_module)
+        module_prefix = PetalIgniter.Templates.module_prefix(components_module)
 
         igniter
-        |> create_petal_module(
-          component_templates_folder,
-          components_module,
-          "_petal_components.ex",
-          components
+        |> Igniter.copy_template(petal_components_template, petal_components_path,
+          module_prefix: module_prefix,
+          components: components
         )
         |> add_petal_components_use(web_module, petal_module)
       end
-    end
-
-    defp create_petal_module(igniter, component_templates_folder, base_module, file, components) do
-      # Starting to think that this bit of code (or slight variation) should be encapsulated into a function
-      # Thinking about it, really we're creating an assigns. I think we should follow the assigns pattern -
-      # because what we're really doing is dealing with templates
-      component_template = Path.join(component_templates_folder, file)
-      component_path = Igniter.Project.Module.proper_location(igniter, base_module)
-
-      module_prefix =
-        base_module
-        |> Module.split()
-        |> Enum.join(".")
-
-      # on_exists: :overwrite?
-      igniter
-      |> Igniter.copy_template(component_template, component_path,
-        module_prefix: module_prefix,
-        components: components
-      )
     end
 
     defp add_petal_components_use(igniter, web_module, petal_module) do
