@@ -88,11 +88,11 @@ if Code.ensure_loaded?(Igniter) do
         petal_module = Module.concat(web_module, Components.PetalComponents)
 
         petal_components_template = Path.join(component_templates_folder, "_petal_components.ex")
-        petal_components_path = Igniter.Project.Module.proper_location(igniter, petal_module)
-        module_prefix = PetalIgniter.Templates.module_prefix(components_module)
+        petal_components_file = Igniter.Project.Module.proper_location(igniter, petal_module)
+        module_prefix = PetalIgniter.Templates.remove_prefix(components_module)
 
         igniter
-        |> Igniter.copy_template(petal_components_template, petal_components_path,
+        |> Igniter.copy_template(petal_components_template, petal_components_file,
           module_prefix: module_prefix,
           components: components
         )

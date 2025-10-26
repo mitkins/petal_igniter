@@ -89,7 +89,7 @@ if Code.ensure_loaded?(Igniter) do
           Module.concat(web_module, Components.PetalComponents)
         end
 
-      module_prefix = PetalIgniter.Templates.module_prefix(petal_module)
+      module_prefix = PetalIgniter.Templates.remove_prefix(petal_module)
 
       components = PetalIgniter.Components.components()
 
@@ -101,13 +101,13 @@ if Code.ensure_loaded?(Igniter) do
       |> Igniter.compose_task("petal.heroicons.install")
       |> Igniter.compose_task("petal.tailwind.install")
       |> Igniter.compose_task("petal_components.css.install")
-      |> PetalIgniter.Templates.reduce_into(components, fn {module_name, file}, igniter ->
+      |> PetalIgniter.Templates.reduce_into(components, fn {module, file}, igniter ->
         component_template = Path.join(component_templates_folder, file)
-        component_module = Module.concat(petal_module, module_name)
-        component_path = Igniter.Project.Module.proper_location(igniter, component_module)
+        component_module = Module.concat(petal_module, module)
+        component_file = Igniter.Project.Module.proper_location(igniter, component_module)
 
         igniter
-        |> Igniter.copy_template(component_template, component_path, module_prefix: module_prefix)
+        |> Igniter.copy_template(component_template, component_file, module_prefix: module_prefix)
       end)
       |> Igniter.compose_task("petal_components.use")
       |> Igniter.compose_task("petal_components.test.install")

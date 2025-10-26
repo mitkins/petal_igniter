@@ -76,6 +76,8 @@ if Code.ensure_loaded?(Igniter) do
       test_templates_folder =
         Igniter.Project.Application.priv_dir(igniter, ["templates", "test"])
 
+      component_case_template = Path.join(test_templates_folder, "_component_case.ex")
+
       base_module =
         if igniter.args.options[:lib] do
           Igniter.Project.Module.module_name_prefix(igniter)
@@ -84,9 +86,7 @@ if Code.ensure_loaded?(Igniter) do
           |> Module.concat(Components.PetalComponents)
         end
 
-      component_case_template = Path.join(test_templates_folder, "_component_case.ex")
-
-      module_prefix = PetalIgniter.Templates.module_prefix(base_module)
+      module_prefix = PetalIgniter.Templates.remove_prefix(base_module)
 
       tests = PetalIgniter.Components.tests()
 
@@ -95,13 +95,13 @@ if Code.ensure_loaded?(Igniter) do
       |> Igniter.copy_template(component_case_template, "test/support/component_case.ex",
         module_prefix: module_prefix
       )
-      |> PetalIgniter.Templates.reduce_into(tests, fn {module_name, test_file}, igniter ->
+      |> PetalIgniter.Templates.reduce_into(tests, fn {module, test_file}, igniter ->
         test_template = Path.join(test_templates_folder, test_file)
-        test_module = Module.concat(base_module, module_name)
-        test_path = Igniter.Project.Module.proper_location(igniter, test_module, :test)
+        test_module = Module.concat(base_module, module)
+        test_file = Igniter.Project.Module.proper_location(igniter, test_module, :test)
 
         igniter
-        |> Igniter.copy_template(test_template, test_path, module_prefix: module_prefix)
+        |> Igniter.copy_template(test_template, test_file, module_prefix: module_prefix)
       end)
     end
   end
