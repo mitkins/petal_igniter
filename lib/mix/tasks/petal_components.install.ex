@@ -81,13 +81,15 @@ if Code.ensure_loaded?(Igniter) do
       component_templates_folder =
         Igniter.Project.Application.priv_dir(igniter, ["templates", "component"])
 
-      base_module =
+      petal_module =
         if igniter.args.options[:lib] do
           Igniter.Project.Module.module_name_prefix(igniter)
         else
-          Igniter.Libs.Phoenix.web_module(igniter)
-          |> Module.concat(Components.PetalComponents)
+          web_module = Igniter.Libs.Phoenix.web_module(igniter)
+          Module.concat(web_module, Components.PetalComponents)
         end
+
+      module_prefix = PetalIgniter.Templates.remove_prefix(petal_module)
 
       components = PetalIgniter.Components.components()
 
@@ -99,27 +101,16 @@ if Code.ensure_loaded?(Igniter) do
       |> Igniter.compose_task("petal.heroicons.install")
       |> Igniter.compose_task("petal.tailwind.install")
       |> Igniter.compose_task("petal_components.css.install")
-      |> reduce_into(components, fn {module, file}, igniter ->
-        generate_component(igniter, component_templates_folder, base_module, module, file)
+      |> PetalIgniter.Templates.reduce_into(components, fn {module, file}, igniter ->
+        component_template = Path.join(component_templates_folder, file)
+        component_module = Module.concat(petal_module, module)
+        component_file = Igniter.Project.Module.proper_location(igniter, component_module)
+
+        igniter
+        |> Igniter.copy_template(component_template, component_file, module_prefix: module_prefix)
       end)
+      |> Igniter.compose_task("petal_components.use")
       |> Igniter.compose_task("petal_components.test.install")
-    end
-
-    defp reduce_into(igniter, enumerable, fun), do: Enum.reduce(enumerable, igniter, fun)
-
-    defp generate_component(igniter, component_templates_folder, base_module, module_name, file) do
-      component_template = Path.join(component_templates_folder, file)
-      component_module = Module.concat(base_module, module_name)
-      component_path = Igniter.Project.Module.proper_location(igniter, component_module)
-
-      # Seems cleaner than Atom.to_string(base_nodule) |> String.replace("Elixir.", "")
-      module_prefix =
-        base_module
-        |> Module.split()
-        |> Enum.join(".")
-
-      igniter
-      |> Igniter.copy_template(component_template, component_path, module_prefix: module_prefix)
     end
   end
 else

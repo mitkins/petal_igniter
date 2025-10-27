@@ -76,6 +76,8 @@ if Code.ensure_loaded?(Igniter) do
       test_templates_folder =
         Igniter.Project.Application.priv_dir(igniter, ["templates", "test"])
 
+      component_case_template = Path.join(test_templates_folder, "_component_case.ex")
+
       base_module =
         if igniter.args.options[:lib] do
           Igniter.Project.Module.module_name_prefix(igniter)
@@ -84,46 +86,23 @@ if Code.ensure_loaded?(Igniter) do
           |> Module.concat(Components.PetalComponents)
         end
 
+      module_prefix = PetalIgniter.Templates.remove_prefix(base_module)
+
       tests = PetalIgniter.Components.tests()
 
       # Do your work here and return an updated igniter
       igniter
-      |> generate_component_case(test_templates_folder, base_module)
-      |> reduce_into(tests, fn {module, test_file}, igniter ->
-        generate_test(igniter, test_templates_folder, base_module, module, test_file)
+      |> Igniter.copy_template(component_case_template, "test/support/component_case.ex",
+        module_prefix: module_prefix
+      )
+      |> PetalIgniter.Templates.reduce_into(tests, fn {module, test_file}, igniter ->
+        test_template = Path.join(test_templates_folder, test_file)
+        test_module = Module.concat(base_module, module)
+        test_file = Igniter.Project.Module.proper_location(igniter, test_module, :test)
+
+        igniter
+        |> Igniter.copy_template(test_template, test_file, module_prefix: module_prefix)
       end)
-    end
-
-    defp reduce_into(igniter, enumerable, fun), do: Enum.reduce(enumerable, igniter, fun)
-
-    defp generate_component_case(igniter, test_templates_folder, base_module) do
-      test_template = Path.join(test_templates_folder, "_component_case.ex")
-      # test_module = Module.concat(base_module, ComponentCase)
-      test_path = "test/support/component_case.ex"
-
-      # Seems cleaner than Atom.to_string(base_nodule) |> String.replace("Elixir.", "")
-      module_prefix =
-        base_module
-        |> Module.split()
-        |> Enum.join(".")
-
-      igniter
-      |> Igniter.copy_template(test_template, test_path, module_prefix: module_prefix)
-    end
-
-    defp generate_test(igniter, test_templates_folder, base_module, module_name, file) do
-      test_template = Path.join(test_templates_folder, file)
-      test_module = Module.concat(base_module, module_name)
-      test_path = Igniter.Project.Module.proper_location(igniter, test_module, :test)
-
-      # Seems cleaner than Atom.to_string(base_nodule) |> String.replace("Elixir.", "")
-      module_prefix =
-        base_module
-        |> Module.split()
-        |> Enum.join(".")
-
-      igniter
-      |> Igniter.copy_template(test_template, test_path, module_prefix: module_prefix)
     end
   end
 else

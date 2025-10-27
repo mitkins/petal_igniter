@@ -6,9 +6,24 @@ defmodule PetalIgniter.Components do
       test_file: "loading_test.exs",
       css_file: "loading.css"
     },
-    %{module: Link, file: "link.ex", test_file: "link_test.exs", css_file: nil},
-    %{module: Icon, file: "icon.ex", test_file: "icon_test.exs", css_file: nil},
-    %{module: Button, file: "button.ex", test_file: "button_test.exs", css_file: "button.css"}
+    %{
+      module: Link,
+      file: "link.ex",
+      test_file: "link_test.exs",
+      css_file: nil
+    },
+    %{
+      module: Icon,
+      file: "icon.ex",
+      test_file: "icon_test.exs",
+      css_file: nil
+    },
+    %{
+      module: Button,
+      file: "button.ex",
+      test_file: "button_test.exs",
+      css_file: "button.css"
+    }
   ]
 
   def list(), do: @components
