@@ -66,9 +66,9 @@ if Code.ensure_loaded?(Igniter) do
           "petal_components.test.install"
         ],
         # `OptionParser` schema
-        schema: [lib: :boolean],
+        schema: [lib: :boolean, js_lib: :string],
         # Default values for the options in the `schema`
-        defaults: [],
+        defaults: [js_lib: "alpine_js"],
         # CLI aliases
         aliases: [],
         # A list of options in the schema that are required
@@ -97,6 +97,7 @@ if Code.ensure_loaded?(Igniter) do
       igniter
       |> Igniter.Project.Deps.add_dep({:phoenix, "~> 1.7"})
       |> Igniter.Project.Deps.add_dep({:phoenix_live_view, "~> 1.0"})
+      |> Igniter.Project.Deps.add_dep({:phoenix_ecto, "~> 4.4"})
       |> Igniter.Project.Deps.add_dep({:lazy_html, ">= 0.0.0", only: :test})
       |> Igniter.compose_task("petal.heroicons.install")
       |> Igniter.compose_task("petal.tailwind.install")
@@ -107,7 +108,10 @@ if Code.ensure_loaded?(Igniter) do
         component_file = Igniter.Project.Module.proper_location(igniter, component_module)
 
         igniter
-        |> Igniter.copy_template(component_template, component_file, module_prefix: module_prefix)
+        |> Igniter.copy_template(component_template, component_file,
+          module_prefix: module_prefix,
+          js_lib: igniter.args.options[:js_lib]
+        )
       end)
       |> Igniter.compose_task("petal_components.use")
       |> Igniter.compose_task("petal_components.test.install")

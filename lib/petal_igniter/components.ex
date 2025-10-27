@@ -23,6 +23,12 @@ defmodule PetalIgniter.Components do
       file: "button.ex",
       test_file: "button_test.exs",
       css_file: "button.css"
+    },
+    %{
+      module: Accordion,
+      file: "accordion.ex",
+      test_file: "accordion_test.exs",
+      css_file: "accordion.css"
     }
   ]
 

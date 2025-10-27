@@ -61,9 +61,9 @@ if Code.ensure_loaded?(Igniter) do
         # This ensures your option schema includes options from nested tasks
         composes: [],
         # `OptionParser` schema
-        schema: [lib: :boolean],
+        schema: [lib: :boolean, js_lib: :string],
         # Default values for the options in the `schema`
-        defaults: [],
+        defaults: [js_lib: "alpine_js"],
         # CLI aliases
         aliases: [],
         # A list of options in the schema that are required
@@ -101,7 +101,10 @@ if Code.ensure_loaded?(Igniter) do
         test_file = Igniter.Project.Module.proper_location(igniter, test_module, :test)
 
         igniter
-        |> Igniter.copy_template(test_template, test_file, module_prefix: module_prefix)
+        |> Igniter.copy_template(test_template, test_file,
+          module_prefix: module_prefix,
+          js_lib: igniter.args.options[:js_lib]
+        )
       end)
     end
   end
