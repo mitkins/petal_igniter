@@ -91,6 +91,10 @@ if Code.ensure_loaded?(Igniter) do
 
       module_prefix = PetalIgniter.Templates.remove_prefix(petal_module)
 
+      helpers_template = Path.join(component_templates_folder, "_helpers.ex")
+      helpers_module = Module.concat(petal_module, Helpers)
+      helpers_file = Igniter.Project.Module.proper_location(igniter, helpers_module)
+
       components = PetalIgniter.Components.components()
 
       # Do your work here and return an updated igniter
@@ -102,6 +106,7 @@ if Code.ensure_loaded?(Igniter) do
       |> Igniter.compose_task("petal.heroicons.install")
       |> Igniter.compose_task("petal.tailwind.install")
       |> Igniter.compose_task("petal_components.css.install")
+      |> Igniter.copy_template(helpers_template, helpers_file, module_prefix: module_prefix)
       |> PetalIgniter.Templates.reduce_into(components, fn {module, file}, igniter ->
         component_template = Path.join(component_templates_folder, file)
         component_module = Module.concat(petal_module, module)

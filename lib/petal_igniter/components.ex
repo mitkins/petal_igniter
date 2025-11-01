@@ -1,22 +1,16 @@
 defmodule PetalIgniter.Components do
   @components [
     %{
-      module: Loading,
-      file: "loading.ex",
-      test_file: "loading_test.exs",
-      css_file: "loading.css"
+      module: Accordion,
+      file: "accordion.ex",
+      test_file: "accordion_test.exs",
+      css_file: "accordion.css"
     },
     %{
-      module: Link,
-      file: "link.ex",
-      test_file: "link_test.exs",
-      css_file: nil
-    },
-    %{
-      module: Icon,
-      file: "icon.ex",
-      test_file: "icon_test.exs",
-      css_file: nil
+      module: Alert,
+      file: "alert.ex",
+      test_file: "alert_test.exs",
+      css_file: "alert.css"
     },
     %{
       module: Button,
@@ -25,10 +19,22 @@ defmodule PetalIgniter.Components do
       css_file: "button.css"
     },
     %{
-      module: Accordion,
-      file: "accordion.ex",
-      test_file: "accordion_test.exs",
-      css_file: "accordion.css"
+      module: Icon,
+      file: "icon.ex",
+      test_file: "icon_test.exs",
+      css_file: nil
+    },
+    %{
+      module: Link,
+      file: "link.ex",
+      test_file: "link_test.exs",
+      css_file: nil
+    },
+    %{
+      module: Loading,
+      file: "loading.ex",
+      test_file: "loading_test.exs",
+      css_file: "loading.css"
     }
   ]
 
