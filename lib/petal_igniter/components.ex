@@ -103,6 +103,12 @@ defmodule PetalIgniter.Components do
       css_file: "marquee.css"
     },
     %{
+      module: Menu,
+      file: "menu.ex",
+      test_file: "menu_test.exs",
+      css_file: "menu.css"
+    },
+    %{
       module: Typography,
       file: "typography.ex",
       test_file: "typography_test.exs",
