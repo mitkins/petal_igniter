@@ -127,6 +127,12 @@ defmodule PetalIgniter.Components do
       css_file: nil
     },
     %{
+      module: Progress,
+      file: "progress.ex",
+      test_file: "progress_test.exs",
+      css_file: "progress.css"
+    },
+    %{
       module: Typography,
       file: "typography.ex",
       test_file: "typography_test.exs",
