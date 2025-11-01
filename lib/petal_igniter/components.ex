@@ -97,6 +97,12 @@ defmodule PetalIgniter.Components do
       css_file: "loading.css"
     },
     %{
+      module: Marquee,
+      file: "marquee.ex",
+      test_file: "marquee_test.exs",
+      css_file: "marquee.css"
+    },
+    %{
       module: Typography,
       file: "typography.ex",
       test_file: "typography_test.exs",
