@@ -157,6 +157,12 @@ defmodule PetalIgniter.Components do
       css_file: "stepper.css"
     },
     %{
+      module: Table,
+      file: "table.ex",
+      test_file: "table_test.exs",
+      css_file: "table.css"
+    },
+    %{
       module: Typography,
       file: "typography.ex",
       test_file: "typography_test.exs",
