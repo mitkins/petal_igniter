@@ -79,6 +79,12 @@ defmodule PetalIgniter.Components do
       css_file: nil
     },
     %{
+      module: Input,
+      file: "input.ex",
+      test_file: "input_test.exs",
+      css_file: nil
+    },
+    %{
       module: Link,
       file: "link.ex",
       test_file: "link_test.exs",
