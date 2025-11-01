@@ -133,6 +133,12 @@ defmodule PetalIgniter.Components do
       css_file: "progress.css"
     },
     %{
+      module: Rating,
+      file: "rating.ex",
+      test_file: "rating_test.exs",
+      css_file: "rating.css"
+    },
+    %{
       module: Typography,
       file: "typography.ex",
       test_file: "typography_test.exs",
