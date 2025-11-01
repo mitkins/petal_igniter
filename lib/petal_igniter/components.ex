@@ -31,6 +31,12 @@ defmodule PetalIgniter.Components do
       css_file: "breadcrumbs.css"
     },
     %{
+      module: ButtonGroup,
+      file: "button_group.ex",
+      test_file: "button_group_test.exs",
+      css_file: "button_group.css"
+    },
+    %{
       module: Button,
       file: "button.ex",
       test_file: "button_test.exs",
