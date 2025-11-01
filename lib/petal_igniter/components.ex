@@ -65,6 +65,12 @@ defmodule PetalIgniter.Components do
       file: "loading.ex",
       test_file: "loading_test.exs",
       css_file: "loading.css"
+    },
+    %{
+      module: Typography,
+      file: "typography.ex",
+      test_file: "typography_test.exs",
+      css_file: "typography.css"
     }
   ]
 
