@@ -109,6 +109,12 @@ defmodule PetalIgniter.Components do
       css_file: "menu.css"
     },
     %{
+      module: Modal,
+      file: "modal.ex",
+      test_file: "modal_test.exs",
+      css_file: "modal.css"
+    },
+    %{
       module: Typography,
       file: "typography.ex",
       test_file: "typography_test.exs",
