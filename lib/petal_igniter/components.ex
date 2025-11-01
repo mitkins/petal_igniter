@@ -115,6 +115,18 @@ defmodule PetalIgniter.Components do
       css_file: "modal.css"
     },
     %{
+      module: Pagination,
+      file: "pagination.ex",
+      test_file: "pagination_test.exs",
+      css_file: "pagination.css"
+    },
+    %{
+      module: PaginationInternal,
+      file: "pagination_internal.ex",
+      test_file: nil,
+      css_file: nil
+    },
+    %{
       module: Typography,
       file: "typography.ex",
       test_file: "typography_test.exs",
