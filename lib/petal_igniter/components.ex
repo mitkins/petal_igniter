@@ -145,6 +145,12 @@ defmodule PetalIgniter.Components do
       css_file: "skeleton.css"
     },
     %{
+      module: SlideOver,
+      file: "slide_over.ex",
+      test_file: "slide_over_test.exs",
+      css_file: "slide_over.css"
+    },
+    %{
       module: Typography,
       file: "typography.ex",
       test_file: "typography_test.exs",
