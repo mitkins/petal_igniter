@@ -81,7 +81,7 @@ if Code.ensure_loaded?(Igniter) do
         component_templates_folder =
           Igniter.Project.Application.priv_dir(igniter, ["templates", "component"])
 
-        components = PetalIgniter.Components.components()
+        public_components = PetalIgniter.Components.public_components()
 
         web_module = Igniter.Libs.Phoenix.web_module(igniter)
         components_module = Module.concat(web_module, Components)
@@ -94,7 +94,7 @@ if Code.ensure_loaded?(Igniter) do
         igniter
         |> Igniter.copy_template(petal_components_template, petal_components_file,
           module_prefix: module_prefix,
-          components: components
+          components: public_components
         )
         |> add_petal_components_use(web_module, petal_module)
       end

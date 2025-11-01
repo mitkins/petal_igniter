@@ -182,11 +182,22 @@ defmodule PetalIgniter.Components do
     }
   ]
 
+  @private_components [
+    PaginationInternal
+  ]
+
   def list(), do: @components
 
   def components() do
     @components
     |> Enum.filter(fn component -> component.file != nil end)
+    |> Enum.map(fn component -> {component.module, component.file} end)
+  end
+
+  def public_components() do
+    @components
+    |> Enum.filter(fn component -> component.file != nil end)
+    |> Enum.filter(fn component -> !(component.module in @private_components) end)
     |> Enum.map(fn component -> {component.module, component.file} end)
   end
 
