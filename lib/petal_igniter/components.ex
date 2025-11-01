@@ -139,6 +139,12 @@ defmodule PetalIgniter.Components do
       css_file: "rating.css"
     },
     %{
+      module: Skeleton,
+      file: "skeleton.ex",
+      test_file: "skeleton_test.exs",
+      css_file: "skeleton.css"
+    },
+    %{
       module: Typography,
       file: "typography.ex",
       test_file: "typography_test.exs",
