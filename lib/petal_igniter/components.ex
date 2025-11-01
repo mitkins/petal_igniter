@@ -173,6 +173,12 @@ defmodule PetalIgniter.Components do
       file: "typography.ex",
       test_file: "typography_test.exs",
       css_file: "typography.css"
+    },
+    %{
+      module: UserDropdownMenu,
+      file: "user_dropdown_menu.ex",
+      test_file: "user_dropdown_menu_test.exs",
+      css_file: nil
     }
   ]
 
