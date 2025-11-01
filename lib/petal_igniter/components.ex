@@ -49,6 +49,12 @@ defmodule PetalIgniter.Components do
       css_file: "card.css"
     },
     %{
+      module: Container,
+      file: "container.ex",
+      test_file: "container_test.exs",
+      css_file: "container.css"
+    },
+    %{
       module: Icon,
       file: "icon.ex",
       test_file: "icon_test.exs",
