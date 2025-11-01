@@ -55,6 +55,12 @@ defmodule PetalIgniter.Components do
       css_file: "container.css"
     },
     %{
+      module: Dropdown,
+      file: "dropdown.ex",
+      test_file: "dropdown_test.exs",
+      css_file: "dropdown.css"
+    },
+    %{
       module: Icon,
       file: "icon.ex",
       test_file: "icon_test.exs",
