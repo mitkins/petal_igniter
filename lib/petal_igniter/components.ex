@@ -25,6 +25,12 @@ defmodule PetalIgniter.Components do
       css_file: "badge.css"
     },
     %{
+      module: Breadcrumbs,
+      file: "breadcrumbs.ex",
+      test_file: "breadcrumbs_test.exs",
+      css_file: "breadcrumbs.css"
+    },
+    %{
       module: Button,
       file: "button.ex",
       test_file: "button_test.exs",
