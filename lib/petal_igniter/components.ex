@@ -31,16 +31,22 @@ defmodule PetalIgniter.Components do
       css_file: "breadcrumbs.css"
     },
     %{
+      module: Button,
+      file: "button.ex",
+      test_file: "button_test.exs",
+      css_file: "button.css"
+    },
+    %{
       module: ButtonGroup,
       file: "button_group.ex",
       test_file: "button_group_test.exs",
       css_file: "button_group.css"
     },
     %{
-      module: Button,
-      file: "button.ex",
-      test_file: "button_test.exs",
-      css_file: "button.css"
+      module: Card,
+      file: "card.ex",
+      test_file: "card_test.exs",
+      css_file: "card.css"
     },
     %{
       module: Icon,
