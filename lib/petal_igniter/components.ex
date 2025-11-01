@@ -163,6 +163,12 @@ defmodule PetalIgniter.Components do
       css_file: "table.css"
     },
     %{
+      module: Tabs,
+      file: "tabs.ex",
+      test_file: "tabs_test.exs",
+      css_file: "tabs.css"
+    },
+    %{
       module: Typography,
       file: "typography.ex",
       test_file: "typography_test.exs",
