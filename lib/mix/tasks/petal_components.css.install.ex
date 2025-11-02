@@ -63,11 +63,11 @@ if Code.ensure_loaded?(Igniter) do
         # This ensures your option schema includes options from nested tasks
         composes: [],
         # `OptionParser` schema
-        schema: [lib: :boolean],
+        schema: [lib: :boolean, component: :keep],
         # Default values for the options in the `schema`
-        defaults: [],
+        defaults: [component: []],
         # CLI aliases
-        aliases: [],
+        aliases: [c: :component],
         # A list of options in the schema that are required
         required: []
       }
@@ -75,42 +75,59 @@ if Code.ensure_loaded?(Igniter) do
 
     @impl Igniter.Mix.Task
     def igniter(igniter) do
-      css_templates_folder =
-        Igniter.Project.Application.priv_dir(igniter, ["templates", "css"])
+      component_names = igniter.args.options[:component]
 
-      default_css_template = Path.join(css_templates_folder, "_default.css")
-      colors_css_template = Path.join(css_templates_folder, "_colors.css")
+      with :ok <- PetalIgniter.Components.validate_component_names(component_names) do
+        templates_folder =
+          Igniter.Project.Application.priv_dir(igniter, ["templates", "css"])
 
-      css_files =
-        PetalIgniter.Components.css_files()
-        |> Enum.map(fn css_file ->
-          css_template = Path.join(css_templates_folder, css_file)
+        css_files =
+          PetalIgniter.Components.css_files(component_names)
+          |> Enum.map(fn css_file ->
+            css_template = Path.join(templates_folder, css_file)
 
-          EEx.eval_file(css_template, [])
-        end)
+            EEx.eval_file(css_template, [])
+          end)
 
-      # Do your work here and return an updated igniter
-      if igniter.args.options[:lib] do
-        igniter
-        |> Igniter.copy_template(default_css_template, "assets/css/default.css",
-          css_files: css_files
-        )
+        # Do your work here and return an updated igniter
+        if igniter.args.options[:lib] do
+          library_css(igniter, templates_folder, css_files)
+        else
+          web_module_css(igniter, templates_folder, css_files)
+        end
       else
-        igniter
-        |> Igniter.copy_template(default_css_template, "assets/css/petal_components.css",
-          css_files: css_files
-        )
-        |> Igniter.copy_template(colors_css_template, "assets/css/colors.css", [])
-        |> then(fn igniter ->
-          if Igniter.exists?(igniter, @app_css) do
-            igniter
-            |> maybe_add_import(@app_css, "./petal_components.css")
-            |> maybe_add_import(@app_css, "./colors.css")
-          else
-            Igniter.add_warning(igniter, "Could not find #{@app_css}. Skipping CSS imports.")
-          end
-        end)
+        {:error, rejected} ->
+          PetalIgniter.Templates.add_issues_for_rejected_components(igniter, rejected)
       end
+    end
+
+    defp library_css(igniter, templates_folder, css_files) do
+      default_css_template = Path.join(templates_folder, "_default.css")
+
+      igniter
+      |> Igniter.copy_template(default_css_template, "assets/css/default.css",
+        css_files: css_files
+      )
+    end
+
+    defp web_module_css(igniter, templates_folder, css_files) do
+      default_css_template = Path.join(templates_folder, "_default.css")
+      colors_css_template = Path.join(templates_folder, "_colors.css")
+
+      igniter
+      |> Igniter.copy_template(default_css_template, "assets/css/petal_components.css",
+        css_files: css_files
+      )
+      |> Igniter.copy_template(colors_css_template, "assets/css/colors.css", [])
+      |> then(fn igniter ->
+        if Igniter.exists?(igniter, @app_css) do
+          igniter
+          |> maybe_add_import(@app_css, "./petal_components.css")
+          |> maybe_add_import(@app_css, "./colors.css")
+        else
+          Igniter.add_warning(igniter, "Could not find #{@app_css}. Skipping CSS imports.")
+        end
+      end)
     end
 
     defp maybe_add_import(igniter, css_path, import) do

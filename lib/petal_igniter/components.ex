@@ -1,215 +1,150 @@
 defmodule PetalIgniter.Components do
   @components [
-    %{
-      module: Accordion,
-      file: "accordion.ex",
-      test_file: "accordion_test.exs",
-      css_file: "accordion.css"
-    },
-    %{
-      module: Alert,
-      file: "alert.ex",
-      test_file: "alert_test.exs",
-      css_file: "alert.css"
-    },
-    %{
-      module: Avatar,
-      file: "avatar.ex",
-      test_file: "avatar_test.exs",
-      css_file: "avatar.css"
-    },
-    %{
-      module: Badge,
-      file: "badge.ex",
-      test_file: "badge_test.exs",
-      css_file: "badge.css"
-    },
-    %{
-      module: Breadcrumbs,
-      file: "breadcrumbs.ex",
-      test_file: "breadcrumbs_test.exs",
-      css_file: "breadcrumbs.css"
-    },
-    %{
-      module: Button,
-      file: "button.ex",
-      test_file: "button_test.exs",
-      css_file: "button.css"
-    },
-    %{
-      module: ButtonGroup,
-      file: "button_group.ex",
-      test_file: "button_group_test.exs",
-      css_file: "button_group.css"
-    },
-    %{
-      module: Card,
-      file: "card.ex",
-      test_file: "card_test.exs",
-      css_file: "card.css"
-    },
-    %{
-      module: Container,
-      file: "container.ex",
-      test_file: "container_test.exs",
-      css_file: "container.css"
-    },
-    %{
-      module: Dropdown,
-      file: "dropdown.ex",
-      test_file: "dropdown_test.exs",
-      css_file: "dropdown.css"
-    },
-    %{
-      module: Field,
-      file: "field.ex",
-      test_file: "field_test.exs",
-      css_file: nil
-    },
-    %{
-      module: Form,
-      file: "form.ex",
-      test_file: "form_test.exs",
-      css_file: "form.css"
-    },
-    %{
-      module: Icon,
-      file: "icon.ex",
-      test_file: "icon_test.exs",
-      css_file: nil
-    },
-    %{
-      module: Input,
-      file: "input.ex",
-      test_file: "input_test.exs",
-      css_file: nil
-    },
-    %{
-      module: Link,
-      file: "link.ex",
-      test_file: "link_test.exs",
-      css_file: nil
-    },
-    %{
-      module: Loading,
-      file: "loading.ex",
-      test_file: "loading_test.exs",
-      css_file: "loading.css"
-    },
-    %{
-      module: Marquee,
-      file: "marquee.ex",
-      test_file: "marquee_test.exs",
-      css_file: "marquee.css"
-    },
-    %{
-      module: Menu,
-      file: "menu.ex",
-      test_file: "menu_test.exs",
-      css_file: "menu.css"
-    },
-    %{
-      module: Modal,
-      file: "modal.ex",
-      test_file: "modal_test.exs",
-      css_file: "modal.css"
-    },
-    %{
-      module: Pagination,
-      file: "pagination.ex",
-      test_file: "pagination_test.exs",
-      css_file: "pagination.css"
-    },
-    %{
-      module: PaginationInternal,
-      file: "pagination_internal.ex",
-      test_file: nil,
-      css_file: nil
-    },
-    %{
-      module: Progress,
-      file: "progress.ex",
-      test_file: "progress_test.exs",
-      css_file: "progress.css"
-    },
-    %{
-      module: Rating,
-      file: "rating.ex",
-      test_file: "rating_test.exs",
-      css_file: "rating.css"
-    },
-    %{
-      module: Skeleton,
-      file: "skeleton.ex",
-      test_file: "skeleton_test.exs",
-      css_file: "skeleton.css"
-    },
-    %{
-      module: SlideOver,
-      file: "slide_over.ex",
-      test_file: "slide_over_test.exs",
-      css_file: "slide_over.css"
-    },
-    %{
-      module: Stepper,
-      file: "stepper.ex",
-      test_file: "stepper_test.exs",
-      css_file: "stepper.css"
-    },
-    %{
-      module: Table,
-      file: "table.ex",
-      test_file: "table_test.exs",
-      css_file: "table.css"
-    },
-    %{
-      module: Tabs,
-      file: "tabs.ex",
-      test_file: "tabs_test.exs",
-      css_file: "tabs.css"
-    },
-    %{
-      module: Typography,
-      file: "typography.ex",
-      test_file: "typography_test.exs",
-      css_file: "typography.css"
-    },
-    %{
-      module: UserDropdownMenu,
-      file: "user_dropdown_menu.ex",
-      test_file: "user_dropdown_menu_test.exs",
-      css_file: nil
-    }
+    accordion: [:icon],
+    alert: [:icon],
+    avatar: [:icon],
+    badge: [],
+    breadcrumbs: [:icon, :link],
+    button: [:icon, :link, :loading],
+    button_group: [],
+    card: [:avatar, :typography],
+    container: [],
+    dropdown: [:icon, :link],
+    field: [:icon],
+    form: [],
+    icon: [],
+    input: [:icon],
+    link: [],
+    loading: [],
+    marquee: [],
+    menu: [:icon, :link],
+    modal: [:icon],
+    pagination: [:icon, :link, :pagination_internal],
+    pagination_internal: [],
+    progress: [],
+    rating: [],
+    skeleton: [],
+    slide_over: [],
+    stepper: [:icon],
+    table: [:avatar],
+    tabs: [:link],
+    typography: [],
+    user_dropdown_menu: [:avatar, :dropdown, :icon]
   ]
 
-  @private_components [
-    PaginationInternal
+  @private [:pagination_internal]
+
+  @skip_tests [:pagination_internal]
+
+  @skip_css [
+    :field,
+    :icon,
+    :input,
+    :link,
+    :pagination_internal,
+    :user_dropdown_menu
   ]
 
-  def list(), do: @components
+  def validate_component_names(component_names) do
+    module_names =
+      @components
+      |> Enum.map(fn {module_name, _deps} -> module_name end)
 
-  def components() do
-    @components
-    |> Enum.filter(fn component -> component.file != nil end)
-    |> Enum.map(fn component -> {component.module, component.file} end)
+    rejected =
+      component_names
+      |> atomise()
+      |> Enum.reject(fn atom_name ->
+        atom_name in module_names
+      end)
+
+    case rejected do
+      [] -> :ok
+      _ -> {:error, rejected}
+    end
   end
 
-  def public_components() do
+  def components(component_names) do
     @components
-    |> Enum.filter(fn component -> component.file != nil end)
-    |> Enum.filter(fn component -> !(component.module in @private_components) end)
-    |> Enum.map(fn component -> {component.module, component.file} end)
+    |> filter_by_name(component_names)
+    |> Enum.map(fn {module_name, _deps} ->
+      {PetalIgniter.Module.to_module(module_name), elixir_file(module_name)}
+    end)
   end
 
-  def tests() do
-    @components
-    |> Enum.filter(fn component -> component.test_file != nil end)
-    |> Enum.map(fn component -> {component.module, component.test_file} end)
+  def deps(component_names) do
+    deps =
+      @components
+      |> filter_by_name(component_names)
+      |> Enum.flat_map(fn {_module_name, deps} -> deps end)
+      |> Enum.uniq()
+
+    components(deps)
   end
 
-  def css_files() do
+  def public_components(component_names) do
+    components(component_names)
+    |> Enum.filter(fn {module_name, _file} -> !(module_name in @private) end)
+  end
+
+  def tests(component_names) do
     @components
-    |> Enum.filter(fn component -> component.css_file != nil end)
-    |> Enum.map(fn component -> component.css_file end)
+    |> filter_by_name(component_names)
+    |> Enum.filter(fn {module_name, _file} -> !(module_name in @skip_tests) end)
+    |> Enum.map(fn {module_name, _deps} ->
+      {
+        PetalIgniter.Module.to_module(module_name),
+        test_file(module_name)
+      }
+    end)
+  end
+
+  def css_files(component_names) do
+    @components
+    |> filter_by_name(component_names)
+    |> Enum.filter(fn {module_name, _file} -> !(module_name in @skip_css) end)
+    |> Enum.map(fn {module_name, _deps} ->
+      css_file(module_name)
+    end)
+  end
+
+  defp atomise(component_names) do
+    Enum.map(component_names, fn component_name ->
+      if is_binary(component_name) do
+        component_name
+        |> Macro.underscore()
+        |> String.to_atom()
+      else
+        component_name
+      end
+    end)
+  end
+
+  defp filter_by_name(components, []), do: components
+
+  defp filter_by_name(components, component_names) do
+    atom_names = atomise(component_names)
+
+    components
+    |> Enum.filter(fn {module_name, _deps} ->
+      module_name in atom_names
+    end)
+  end
+
+  defp elixir_file(module) do
+    component_name = Atom.to_string(module)
+
+    component_name <> ".ex"
+  end
+
+  defp test_file(module) do
+    component_name = Atom.to_string(module)
+
+    component_name <> "_test.exs"
+  end
+
+  defp css_file(module) do
+    component_name = Atom.to_string(module)
+
+    component_name <> ".css"
   end
 end

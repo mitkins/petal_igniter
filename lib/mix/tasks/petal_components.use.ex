@@ -62,11 +62,11 @@ if Code.ensure_loaded?(Igniter) do
         # This ensures your option schema includes options from nested tasks
         composes: [],
         # `OptionParser` schema
-        schema: [lib: :boolean],
+        schema: [lib: :boolean, component: :keep],
         # Default values for the options in the `schema`
-        defaults: [],
+        defaults: [component: []],
         # CLI aliases
-        aliases: [],
+        aliases: [c: :component],
         # A list of options in the schema that are required
         required: []
       }
@@ -78,18 +78,26 @@ if Code.ensure_loaded?(Igniter) do
       if igniter.args.options[:lib] do
         igniter
       else
-        component_templates_folder =
+        web_module_use(igniter)
+      end
+    end
+
+    defp web_module_use(igniter) do
+      component_names = igniter.args.options[:component]
+
+      with :ok <- PetalIgniter.Components.validate_component_names(component_names) do
+        templates_folder =
           Igniter.Project.Application.priv_dir(igniter, ["templates", "component"])
 
-        public_components = PetalIgniter.Components.public_components()
+        public_components = PetalIgniter.Components.public_components(component_names)
 
         web_module = Igniter.Libs.Phoenix.web_module(igniter)
         components_module = Module.concat(web_module, Components)
         petal_module = Module.concat(web_module, Components.PetalComponents)
+        module_prefix = PetalIgniter.Module.remove_prefix(components_module)
 
-        petal_components_template = Path.join(component_templates_folder, "_petal_components.ex")
+        petal_components_template = Path.join(templates_folder, "_petal_components.ex")
         petal_components_file = Igniter.Project.Module.proper_location(igniter, petal_module)
-        module_prefix = PetalIgniter.Templates.remove_prefix(components_module)
 
         igniter
         |> Igniter.copy_template(petal_components_template, petal_components_file,
@@ -97,6 +105,9 @@ if Code.ensure_loaded?(Igniter) do
           components: public_components
         )
         |> add_petal_components_use(web_module, petal_module)
+      else
+        {:error, rejected} ->
+          PetalIgniter.Templates.add_issues_for_rejected_components(igniter, rejected)
       end
     end
 

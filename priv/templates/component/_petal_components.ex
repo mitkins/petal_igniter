@@ -6,7 +6,7 @@ defmodule <%= @module_prefix %>.PetalComponents do
       <%=
         @components
         |> Enum.map(fn {module, _file_name} ->
-          module_name = PetalIgniter.Templates.remove_prefix(module)
+          module_name = PetalIgniter.Module.remove_prefix(module)
 
           "import PetalComponents.#{module_name}\n"
         end)
