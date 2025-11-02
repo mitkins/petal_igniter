@@ -66,9 +66,9 @@ if Code.ensure_loaded?(Igniter) do
           "petal_components.test.install"
         ],
         # `OptionParser` schema
-        schema: [lib: :boolean],
+        schema: [lib: :boolean, js_lib: :string],
         # Default values for the options in the `schema`
-        defaults: [],
+        defaults: [js_lib: "alpine_js"],
         # CLI aliases
         aliases: [],
         # A list of options in the schema that are required
@@ -91,23 +91,33 @@ if Code.ensure_loaded?(Igniter) do
 
       module_prefix = PetalIgniter.Templates.remove_prefix(petal_module)
 
+      helpers_template = Path.join(component_templates_folder, "_helpers.ex")
+      helpers_module = Module.concat(petal_module, Helpers)
+      helpers_file = Igniter.Project.Module.proper_location(igniter, helpers_module)
+
       components = PetalIgniter.Components.components()
 
       # Do your work here and return an updated igniter
       igniter
       |> Igniter.Project.Deps.add_dep({:phoenix, "~> 1.7"})
       |> Igniter.Project.Deps.add_dep({:phoenix_live_view, "~> 1.0"})
+      |> Igniter.Project.Deps.add_dep({:phoenix_ecto, "~> 4.4"})
+      |> Igniter.Project.Deps.add_dep({:phoenix_html_helpers, "~> 1.0"})
       |> Igniter.Project.Deps.add_dep({:lazy_html, ">= 0.0.0", only: :test})
       |> Igniter.compose_task("petal.heroicons.install")
       |> Igniter.compose_task("petal.tailwind.install")
       |> Igniter.compose_task("petal_components.css.install")
+      |> Igniter.copy_template(helpers_template, helpers_file, module_prefix: module_prefix)
       |> PetalIgniter.Templates.reduce_into(components, fn {module, file}, igniter ->
         component_template = Path.join(component_templates_folder, file)
         component_module = Module.concat(petal_module, module)
         component_file = Igniter.Project.Module.proper_location(igniter, component_module)
 
         igniter
-        |> Igniter.copy_template(component_template, component_file, module_prefix: module_prefix)
+        |> Igniter.copy_template(component_template, component_file,
+          module_prefix: module_prefix,
+          js_lib: igniter.args.options[:js_lib]
+        )
       end)
       |> Igniter.compose_task("petal_components.use")
       |> Igniter.compose_task("petal_components.test.install")

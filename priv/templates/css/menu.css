@@ -1,0 +1,62 @@
+/* Menu */
+
+.pc-vertical-menu {
+  @apply flex flex-col gap-5;
+}
+
+.pc-vertical-menu-item__icon {
+  @apply shrink-0 w-5 h-5;
+}
+
+.pc-vertical-menu-item {
+  @apply flex items-center w-full gap-3 px-3 py-2 text-sm font-semibold leading-none transition duration-200 rounded-md;
+}
+
+.pc-vertical-menu-item--active {
+  @apply text-primary-700 dark:text-primary-400 bg-gray-50 dark:bg-gray-800;
+}
+
+.pc-vertical-menu-item--inactive {
+  @apply text-gray-700 hover:bg-gray-50 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white dark:hover:bg-gray-700;
+}
+
+.pc-vertical-menu__menu-group__wrapper {
+  @apply divide-y divide-gray-300;
+}
+
+.pc-vertical-menu__menu-group {
+  @apply space-y-1;
+}
+
+.pc-vertical-menu__menu-group__title {
+  @apply pl-3 mb-3 text-xs font-semibold leading-6 text-gray-400 uppercase;
+}
+
+.pc-vertical-menu-item__label {
+  @apply flex-1;
+}
+
+.pc-vertical-menu-item__toggle-label {
+  @apply flex-1 text-left;
+}
+
+.pc-vertical-menu-item__toggle-chevron__icon {
+  /* !important is needed because heroicon class overrides width and height */
+  @apply w-3! h-3! ml-2 transition duration-200 transform;
+}
+
+.pc-vertical-menu-item__toggle-chevron__wrapper {
+  @apply relative inline-block;
+}
+
+.pc-vertical-menu-item__submenu-wrapper {
+  @apply mt-1 ml-3 space-y-1;
+}
+
+.pc-vertical-menu-item__icon--active {
+  @apply shrink-0 w-5 h-5;
+}
+
+.pc-vertical-menu-item__icon--inactive {
+  @apply shrink-0 w-5 h-5;
+}

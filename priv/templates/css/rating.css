@@ -1,0 +1,17 @@
+/* Rating */
+
+.pc-rating__wrapper {
+  @apply flex items-center gap-1;
+}
+.pc-rating__label {
+  @apply ml-1 text-base font-bold text-gray-700 dark:text-gray-300;
+}
+.pc-rating__star--filled {
+  @apply w-5 h-5 fill-warning-500;
+}
+.pc-rating__star--half {
+  @apply w-5 h-5 fill-warning-500;
+}
+.pc-rating__star--empty {
+  @apply w-5 h-5 fill-gray-400 dark:fill-gray-500;
+}

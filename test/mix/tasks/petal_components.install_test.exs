@@ -9,9 +9,11 @@ defmodule Mix.Tasks.PetalComponents.InstallTest do
     |> Igniter.compose_task("petal_components.install", ["--lib"])
     # see tools in `Igniter.Test` for available assertions & helpers
     |> assert_creates("assets/css/default.css")
+    |> assert_creates("lib/petal_igniter/accordion.ex")
     |> assert_creates("lib/petal_igniter/button.ex")
     |> assert_creates("lib/petal_igniter/icon.ex")
     |> assert_creates("lib/petal_igniter/link.ex")
+    |> assert_creates("test/petal_igniter/accordion_test.exs")
     |> assert_creates("test/petal_igniter/button_test.exs")
     |> assert_creates("test/petal_igniter/icon_test.exs")
     |> assert_creates("test/petal_igniter/link_test.exs")
