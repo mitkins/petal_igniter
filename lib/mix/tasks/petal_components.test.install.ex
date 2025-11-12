@@ -61,11 +61,11 @@ if Code.ensure_loaded?(Igniter) do
         # This ensures your option schema includes options from nested tasks
         composes: [],
         # `OptionParser` schema
-        schema: [lib: :boolean, js_lib: :string],
+        schema: [lib: :boolean, js_lib: :string, component: :keep],
         # Default values for the options in the `schema`
-        defaults: [js_lib: "alpine_js"],
+        defaults: [js_lib: "alpine_js", component: []],
         # CLI aliases
-        aliases: [],
+        aliases: [c: :component],
         # A list of options in the schema that are required
         required: []
       }
@@ -73,39 +73,45 @@ if Code.ensure_loaded?(Igniter) do
 
     @impl Igniter.Mix.Task
     def igniter(igniter) do
-      test_templates_folder =
-        Igniter.Project.Application.priv_dir(igniter, ["templates", "test"])
+      component_names = igniter.args.options[:component]
 
-      component_case_template = Path.join(test_templates_folder, "_component_case.ex")
+      with :ok <- PetalIgniter.Components.validate_component_names(component_names) do
+        templates_folder =
+          Igniter.Project.Application.priv_dir(igniter, ["templates", "test"])
 
-      base_module =
-        if igniter.args.options[:lib] do
-          Igniter.Project.Module.module_name_prefix(igniter)
-        else
-          Igniter.Libs.Phoenix.web_module(igniter)
-          |> Module.concat(Components.PetalComponents)
-        end
+        component_case_template = Path.join(templates_folder, "_component_case.ex")
 
-      module_prefix = PetalIgniter.Templates.remove_prefix(base_module)
+        base_module =
+          if igniter.args.options[:lib] do
+            Igniter.Project.Module.module_name_prefix(igniter)
+          else
+            Igniter.Libs.Phoenix.web_module(igniter)
+            |> Module.concat(Components.PetalComponents)
+          end
 
-      tests = PetalIgniter.Components.tests()
+        module_prefix = PetalIgniter.Module.remove_prefix(base_module)
 
-      # Do your work here and return an updated igniter
-      igniter
-      |> Igniter.copy_template(component_case_template, "test/support/component_case.ex",
-        module_prefix: module_prefix
-      )
-      |> PetalIgniter.Templates.reduce_into(tests, fn {module, test_file}, igniter ->
-        test_template = Path.join(test_templates_folder, test_file)
-        test_module = Module.concat(base_module, module)
-        test_file = Igniter.Project.Module.proper_location(igniter, test_module, :test)
+        tests = PetalIgniter.Components.tests(component_names)
 
+        # Do your work here and return an updated igniter
         igniter
-        |> Igniter.copy_template(test_template, test_file,
-          module_prefix: module_prefix,
-          js_lib: igniter.args.options[:js_lib]
+        |> Igniter.copy_template(component_case_template, "test/support/component_case.ex",
+          module_prefix: module_prefix
         )
-      end)
+        |> PetalIgniter.Templates.reduce_into(tests, fn {module, test_file}, igniter ->
+          test_template = Path.join(templates_folder, test_file)
+          test_file = PetalIgniter.Module.proper_location(igniter, base_module, module, :test)
+
+          igniter
+          |> Igniter.copy_template(test_template, test_file,
+            module_prefix: module_prefix,
+            js_lib: igniter.args.options[:js_lib]
+          )
+        end)
+      else
+        {:error, rejected} ->
+          PetalIgniter.Templates.add_issues_for_rejected_components(igniter, rejected)
+      end
     end
   end
 else
