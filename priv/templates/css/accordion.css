@@ -1,72 +1,74 @@
-/* Accordion */
+@layer components {
+  /* Accordion */
 
-.pc-accordion-item {
-  @apply flex items-center justify-between w-full p-5 text-left text-gray-800 bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800;
-}
-.pc-accordion-item--first {
-  @apply rounded-t-xl;
-}
-.pc-accordion-item--all-except-last {
-  @apply border-b-0;
-}
-.pc-accordion-item__heading {
-  @apply text-base font-semibold;
-}
-.pc-accordion-item__chevron {
-  @apply shrink-0 w-6 h-6 ml-3 text-gray-400 duration-300 fill-current dark:group-hover:text-gray-300 group-hover:text-gray-500;
-}
-.pc-accordion-item__content-container {
-  @apply p-5 bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-900;
-}
-.pc-accordion-item__content-container--not-last {
-  @apply border-b-0;
-}
-.pc-accordion-item__content-container--last {
-  @apply border-t-0;
-}
-.pc-accordion-item__content-container--highlight-accordion-button-on-expanded-js-attributes {
-  @apply bg-gray-50 dark:bg-gray-800;
-}
+  .pc-accordion-item {
+    @apply flex items-center justify-between w-full p-5 text-left text-gray-800 bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800;
+  }
+  .pc-accordion-item--first {
+    @apply rounded-t-xl;
+  }
+  .pc-accordion-item--all-except-last {
+    @apply border-b-0;
+  }
+  .pc-accordion-item__heading {
+    @apply text-base font-semibold;
+  }
+  .pc-accordion-item__chevron {
+    @apply shrink-0 w-6 h-6 ml-3 text-gray-400 duration-300 fill-current dark:group-hover:text-gray-300 group-hover:text-gray-500;
+  }
+  .pc-accordion-item__content-container {
+    @apply p-5 bg-white border border-gray-200 dark:border-gray-700 dark:bg-gray-900;
+  }
+  .pc-accordion-item__content-container--not-last {
+    @apply border-b-0;
+  }
+  .pc-accordion-item__content-container--last {
+    @apply border-t-0;
+  }
+  .pc-accordion-item__content-container--highlight-accordion-button-on-expanded-js-attributes {
+    @apply bg-gray-50 dark:bg-gray-800;
+  }
 
-/* Ghost variant */
-.pc-accordion--ghost {
-  @apply w-full mx-auto divide-y divide-gray-900/10 dark:divide-gray-100/10;
-}
+  /* Ghost variant */
+  .pc-accordion--ghost {
+    @apply w-full mx-auto divide-y divide-gray-900/10 dark:divide-gray-100/10;
+  }
 
-.pc-accordion-item--ghost {
-  @apply py-6;
-}
+  .pc-accordion-item--ghost {
+    @apply py-6;
+  }
 
-.pc-accordion-item__button--ghost {
-  @apply flex items-start justify-between w-full text-left text-gray-900 dark:text-gray-100;
-}
+  .pc-accordion-item__button--ghost {
+    @apply flex items-start justify-between w-full text-left text-gray-900 dark:text-gray-100;
+  }
 
-.pc-accordion-item__minus {
-  @apply w-6! h-6! text-gray-400 duration-300 fill-current dark:group-hover:text-gray-300 group-hover:text-gray-500;
-}
-.pc-accordion-item__plus {
-  @apply w-6! h-6! text-gray-400 duration-300 fill-current dark:group-hover:text-gray-300 group-hover:text-gray-500;
-}
+  .pc-accordion-item__minus {
+    @apply w-6! h-6! text-gray-400 duration-300 fill-current dark:group-hover:text-gray-300 group-hover:text-gray-500;
+  }
+  .pc-accordion-item__plus {
+    @apply w-6! h-6! text-gray-400 duration-300 fill-current dark:group-hover:text-gray-300 group-hover:text-gray-500;
+  }
 
-.pc-accordion--ghost [x-cloak].pc-accordion-item__plus,
-.pc-accordion--ghost [x-cloak].pc-accordion-item__minus {
-  display: none !important;
-}
+  .pc-accordion--ghost [x-cloak].pc-accordion-item__plus,
+  .pc-accordion--ghost [x-cloak].pc-accordion-item__minus {
+    display: none !important;
+  }
 
-.pc-accordion-item__heading--ghost {
-  @apply text-base font-semibold leading-7;
-}
+  .pc-accordion-item__heading--ghost {
+    @apply text-base font-semibold leading-7;
+  }
 
-.pc-accordion-item__icon-container--ghost {
-  @apply relative flex items-center ml-6 h-7;
-}
+  .pc-accordion-item__icon-container--ghost {
+    @apply relative flex items-center ml-6 h-7;
+  }
 
-.pc-accordion-item__content--ghost {
-  @apply pr-12 my-2;
-}
+  .pc-accordion-item__content--ghost {
+    @apply pr-12 my-2;
+  }
 
-/* Hide icons by default for LiveView */
-.pc-accordion-item__plus[data-js-loading],
-.pc-accordion-item__minus[data-js-loading] {
-  display: none;
+  /* Hide icons by default for LiveView */
+  .pc-accordion-item__plus[data-js-loading],
+  .pc-accordion-item__minus[data-js-loading] {
+    display: none;
+  }
 }
