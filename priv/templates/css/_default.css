@@ -1,7 +1,3 @@
-@layer components {
-<%=
-  Enum.map(@css_files, fn css_file ->
-    String.replace(css_file, ~r/^/m, " ")
-  end)
-%>
-}
+<%= for css_file <- @css_files do
+%>@import "./<%= css_file %>";
+<% end %>

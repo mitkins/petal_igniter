@@ -38,6 +38,7 @@ if Code.ensure_loaded?(Igniter) do
     @moduledoc __MODULE__.Docs.long_doc()
 
     @app_css "assets/css/app.css"
+    @css_folder "assets/css"
 
     use Igniter.Mix.Task
 
@@ -81,13 +82,7 @@ if Code.ensure_loaded?(Igniter) do
         templates_folder =
           Igniter.Project.Application.priv_dir(igniter, ["templates", "css"])
 
-        css_files =
-          PetalIgniter.Components.css_files(component_names)
-          |> Enum.map(fn css_file ->
-            css_template = Path.join(templates_folder, css_file)
-
-            EEx.eval_file(css_template, [])
-          end)
+        css_files = PetalIgniter.Components.css_files(component_names)
 
         # Do your work here and return an updated igniter
         if igniter.args.options[:lib] do
@@ -105,6 +100,13 @@ if Code.ensure_loaded?(Igniter) do
       default_css_template = Path.join(templates_folder, "_default.css")
 
       igniter
+      |> PetalIgniter.Templates.reduce_into(css_files, fn css_file, acc_igniter ->
+        css_template = Path.join(templates_folder, css_file)
+        css_file = Path.join(@css_folder, css_file)
+
+        acc_igniter
+        |> Igniter.copy_template(css_template, css_file, [])
+      end)
       |> Igniter.copy_template(default_css_template, "assets/css/default.css",
         css_files: css_files
       )
@@ -115,6 +117,13 @@ if Code.ensure_loaded?(Igniter) do
       colors_css_template = Path.join(templates_folder, "_colors.css")
 
       igniter
+      |> PetalIgniter.Templates.reduce_into(css_files, fn css_file, acc_igniter ->
+        css_template = Path.join(templates_folder, css_file)
+        css_file = Path.join(@css_folder, css_file)
+
+        acc_igniter
+        |> Igniter.copy_template(css_template, css_file, [])
+      end)
       |> Igniter.copy_template(default_css_template, "assets/css/petal_components.css",
         css_files: css_files
       )
@@ -124,6 +133,10 @@ if Code.ensure_loaded?(Igniter) do
           igniter
           |> maybe_add_import(@app_css, "./petal_components.css")
           |> maybe_add_import(@app_css, "./colors.css")
+
+          # |> maybe_add_plugin(@app_css, "@tailwindcss/typography")
+          # |> maybe_add_plugin(@app_css, "@tailwindcss/forms")
+          # |> maybe_add_plugin(@app_css, "./tailwind_heroicons.js")
         else
           Igniter.add_warning(igniter, "Could not find #{@app_css}. Skipping CSS imports.")
         end
