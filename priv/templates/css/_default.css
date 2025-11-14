@@ -1,3 +1,13 @@
 <%= for css_file <- @css_files do
 %>@import "./<%= css_file %>";
 <% end %>
+@layer base {
+  /*
+    Petal Component buttons use the pointer by default.
+    Delete this to fallback to Tailwind defaults
+  */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}

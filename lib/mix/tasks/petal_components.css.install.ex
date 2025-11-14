@@ -131,62 +131,14 @@ if Code.ensure_loaded?(Igniter) do
       |> then(fn igniter ->
         if Igniter.exists?(igniter, @app_css) do
           igniter
-          |> maybe_add_import(@app_css, "./petal_components.css")
-          |> maybe_add_import(@app_css, "./colors.css")
-
-          # |> maybe_add_plugin(@app_css, "@tailwindcss/typography")
-          # |> maybe_add_plugin(@app_css, "@tailwindcss/forms")
-          # |> maybe_add_plugin(@app_css, "./tailwind_heroicons.js")
+          |> PetalIgniter.Css.maybe_add_import(@app_css, "./petal_components.css")
+          |> PetalIgniter.Css.maybe_add_import(@app_css, "./colors.css")
+          |> PetalIgniter.Css.maybe_add_plugin(@app_css, "@tailwindcss/typography")
+          |> PetalIgniter.Css.maybe_add_plugin(@app_css, "@tailwindcss/forms")
         else
           Igniter.add_warning(igniter, "Could not find #{@app_css}. Skipping CSS imports.")
         end
       end)
-    end
-
-    defp maybe_add_import(igniter, css_path, import) do
-      escaped_import = Regex.escape(import)
-
-      igniter
-      |> Igniter.update_file(css_path, fn source ->
-        content = Rewrite.Source.get(source, :content)
-
-        if String.match?(content, ~r/@import\s+["']?#{escaped_import}["']?;/) do
-          source
-        else
-          new_content = add_import(content, import)
-
-          Rewrite.Source.update(source, :content, new_content)
-        end
-      end)
-    end
-
-    defp add_import(content, import) do
-      import_statement = "@import \"#{import}\";"
-
-      # Find all existing @import statements
-      import_regex = ~r/^@import\s+[^;]+;/m
-
-      case Regex.run(import_regex, content, return: :index) do
-        nil ->
-          # No existing imports, add at the beginning
-          if String.trim(content) == "" do
-            import_statement <> "\n"
-          else
-            import_statement <> "\n\n" <> content
-          end
-
-        _ ->
-          # Find the last import statement
-          matches = Regex.scan(import_regex, content, return: :index)
-          {last_start, last_length} = List.last(matches) |> hd()
-          last_end = last_start + last_length
-
-          # Insert after the last import
-          before_import = String.slice(content, 0, last_end)
-          after_import = String.slice(content, last_end, String.length(content))
-
-          before_import <> "\n" <> import_statement <> after_import
-      end
     end
   end
 else

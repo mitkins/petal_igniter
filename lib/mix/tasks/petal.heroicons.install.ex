@@ -39,6 +39,8 @@ if Code.ensure_loaded?(Igniter) do
 
     use Igniter.Mix.Task
 
+    @app_css "assets/css/app.css"
+
     @impl Igniter.Mix.Task
     def info(_argv, _composing_task) do
       %Igniter.Mix.Task.Info{
@@ -86,6 +88,20 @@ if Code.ensure_loaded?(Igniter) do
            depth: 1
          ]}
       )
+      |> then(fn igniter ->
+        if igniter.args.options[:lib] do
+          igniter
+        else
+          templates_folder =
+            Igniter.Project.Application.priv_dir(igniter, ["templates", "css"])
+
+          heroicons_js_template = Path.join(templates_folder, "_tailwind_heroicons.js")
+
+          igniter
+          |> Igniter.copy_template(heroicons_js_template, "assets/css/tailwind_heroicons.js", [])
+          |> PetalIgniter.Css.maybe_add_plugin(@app_css, "./tailwind_heroicons.js")
+        end
+      end)
     end
   end
 else
