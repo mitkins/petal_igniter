@@ -1,7 +1,13 @@
-@layer components {
-<%=
-  Enum.map(@css_files, fn css_file ->
-    String.replace(css_file, ~r/^/m, " ")
-  end)
-%>
+<%= for css_file <- @css_files do
+%>@import "./petal_components/<%= css_file %>";
+<% end %>
+@layer base {
+  /*
+    Petal Component buttons use the pointer by default.
+    Delete this to fallback to Tailwind defaults
+  */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }
