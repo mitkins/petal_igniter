@@ -1,4 +1,4 @@
-defmodule PetalIgniter.Module do
+defmodule PetalIgniter.Igniter.Module do
   @type location_type :: :source_folder | {:source_folder, String.t()} | :test | :test_support
 
   @spec proper_location(Igniter.t(), module(), module(), location_type()) :: String.t()

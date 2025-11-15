@@ -90,7 +90,7 @@ if Code.ensure_loaded?(Igniter) do
     def igniter(igniter) do
       component_names = igniter.args.options[:component]
 
-      with :ok <- PetalIgniter.Components.validate_component_names(component_names) do
+      with :ok <- PetalIgniter.Mix.Components.validate_component_names(component_names) do
         templates_folder =
           Igniter.Project.Application.priv_dir(igniter, ["templates", "component"])
 
@@ -102,13 +102,13 @@ if Code.ensure_loaded?(Igniter) do
             Module.concat(web_module, Components.PetalComponents)
           end
 
-        module_prefix = PetalIgniter.Module.remove_prefix(petal_module)
+        module_prefix = PetalIgniter.Igniter.Module.remove_prefix(petal_module)
 
         helpers_template = Path.join(templates_folder, "_helpers.ex")
-        helpers_file = PetalIgniter.Module.proper_location(igniter, petal_module, Helpers)
+        helpers_file = PetalIgniter.Igniter.Module.proper_location(igniter, petal_module, Helpers)
 
-        components = PetalIgniter.Components.components(component_names)
-        deps = PetalIgniter.Components.deps(component_names)
+        components = PetalIgniter.Mix.Components.components(component_names)
+        deps = PetalIgniter.Mix.Components.deps(component_names)
 
         # Do your work here and return an updated igniter
         igniter
@@ -121,9 +121,12 @@ if Code.ensure_loaded?(Igniter) do
         |> Igniter.compose_task("petal.tailwind.install")
         |> Igniter.compose_task("petal_components.css.install")
         |> Igniter.copy_template(helpers_template, helpers_file, module_prefix: module_prefix)
-        |> PetalIgniter.Templates.reduce_into(components, fn {module, file}, acc_igniter ->
+        |> PetalIgniter.Igniter.Templates.reduce_into(components, fn {module, file},
+                                                                     acc_igniter ->
           component_template = Path.join(templates_folder, file)
-          component_file = PetalIgniter.Module.proper_location(acc_igniter, petal_module, module)
+
+          component_file =
+            PetalIgniter.Igniter.Module.proper_location(acc_igniter, petal_module, module)
 
           acc_igniter
           |> Igniter.copy_template(component_template, component_file,
@@ -133,10 +136,10 @@ if Code.ensure_loaded?(Igniter) do
         end)
         |> Igniter.compose_task("petal_components.use")
         |> Igniter.compose_task("petal_components.test.install")
-        |> PetalIgniter.Templates.add_warnings_for_missing_deps(petal_module, deps)
+        |> PetalIgniter.Igniter.Templates.add_warnings_for_missing_deps(petal_module, deps)
       else
         {:error, rejected} ->
-          PetalIgniter.Templates.add_issues_for_rejected_components(igniter, rejected)
+          PetalIgniter.Igniter.Templates.add_issues_for_rejected_components(igniter, rejected)
       end
     end
   end

@@ -1,4 +1,4 @@
-defmodule PetalIgniter.Components do
+defmodule PetalIgniter.Mix.Components do
   @components [
     accordion: [:icon],
     alert: [:icon],
@@ -67,7 +67,7 @@ defmodule PetalIgniter.Components do
     @components
     |> filter_by_name(component_names)
     |> Enum.map(fn {module_name, _deps} ->
-      {PetalIgniter.Module.to_module(module_name), elixir_file(module_name)}
+      {PetalIgniter.Igniter.Module.to_module(module_name), elixir_file(module_name)}
     end)
   end
 
@@ -92,7 +92,7 @@ defmodule PetalIgniter.Components do
     |> Enum.filter(fn {module_name, _file} -> !(module_name in @skip_tests) end)
     |> Enum.map(fn {module_name, _deps} ->
       {
-        PetalIgniter.Module.to_module(module_name),
+        PetalIgniter.Igniter.Module.to_module(module_name),
         test_file(module_name)
       }
     end)

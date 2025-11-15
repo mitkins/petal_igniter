@@ -1,10 +1,11 @@
-defmodule PetalIgniter.Templates do
+defmodule PetalIgniter.Igniter.Templates do
   def reduce_into(igniter, enumerable, fun), do: Enum.reduce(enumerable, igniter, fun)
 
   def add_warnings_for_missing_deps(igniter, base_module, deps) do
     deps
     |> Enum.reduce(igniter, fn {module, _file}, acc_igniter ->
-      component_file = PetalIgniter.Module.proper_location(acc_igniter, base_module, module)
+      component_file =
+        PetalIgniter.Igniter.Module.proper_location(acc_igniter, base_module, module)
 
       if !Igniter.exists?(acc_igniter, component_file) do
         Igniter.add_warning(

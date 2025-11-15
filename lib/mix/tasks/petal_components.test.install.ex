@@ -75,7 +75,7 @@ if Code.ensure_loaded?(Igniter) do
     def igniter(igniter) do
       component_names = igniter.args.options[:component]
 
-      with :ok <- PetalIgniter.Components.validate_component_names(component_names) do
+      with :ok <- PetalIgniter.Mix.Components.validate_component_names(component_names) do
         templates_folder =
           Igniter.Project.Application.priv_dir(igniter, ["templates", "test"])
 
@@ -89,18 +89,20 @@ if Code.ensure_loaded?(Igniter) do
             |> Module.concat(Components.PetalComponents)
           end
 
-        module_prefix = PetalIgniter.Module.remove_prefix(base_module)
+        module_prefix = PetalIgniter.Igniter.Module.remove_prefix(base_module)
 
-        tests = PetalIgniter.Components.tests(component_names)
+        tests = PetalIgniter.Mix.Components.tests(component_names)
 
         # Do your work here and return an updated igniter
         igniter
         |> Igniter.copy_template(component_case_template, "test/support/component_case.ex",
           module_prefix: module_prefix
         )
-        |> PetalIgniter.Templates.reduce_into(tests, fn {module, test_file}, igniter ->
+        |> PetalIgniter.Igniter.Templates.reduce_into(tests, fn {module, test_file}, igniter ->
           test_template = Path.join(templates_folder, test_file)
-          test_file = PetalIgniter.Module.proper_location(igniter, base_module, module, :test)
+
+          test_file =
+            PetalIgniter.Igniter.Module.proper_location(igniter, base_module, module, :test)
 
           igniter
           |> Igniter.copy_template(test_template, test_file,
@@ -110,7 +112,7 @@ if Code.ensure_loaded?(Igniter) do
         end)
       else
         {:error, rejected} ->
-          PetalIgniter.Templates.add_issues_for_rejected_components(igniter, rejected)
+          PetalIgniter.Igniter.Templates.add_issues_for_rejected_components(igniter, rejected)
       end
     end
   end
