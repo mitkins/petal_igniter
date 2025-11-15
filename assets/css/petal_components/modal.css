@@ -1,0 +1,52 @@
+@layer components {
+  /* Modal */
+
+  .pc-modal {
+    @apply relative z-50;
+  }
+  .pc-modal__overlay {
+    @apply fixed inset-0 z-50 transition-opacity bg-gray-50/90 dark:bg-gray-900/90;
+  }
+  .pc-modal__wrapper {
+    @apply fixed inset-0 z-50 flex items-center justify-center px-4 my-4 overflow-hidden transform sm:px-6;
+  }
+  .pc-modal__box {
+    @apply w-full max-h-full overflow-auto bg-white shadow-lg rounded-xl dark:bg-gray-800;
+  }
+  .pc-modal__box--sm {
+    @apply max-w-sm;
+  }
+  .pc-modal__box--md {
+    @apply max-w-xl;
+  }
+  .pc-modal__box--lg {
+    @apply max-w-3xl;
+  }
+  .pc-modal__box--xl {
+    @apply max-w-5xl;
+  }
+  .pc-modal__box--2xl {
+    @apply max-w-7xl;
+  }
+  .pc-modal__box--full {
+    @apply max-w-full;
+  }
+  .pc-modal__header {
+    @apply px-5 py-3 border-b border-gray-100 dark:border-gray-700;
+  }
+  .pc-modal__header__container {
+    @apply flex items-center justify-between;
+  }
+  .pc-modal__header__text {
+    @apply font-semibold text-gray-800 dark:text-gray-200;
+  }
+  .pc-modal__header__button {
+    @apply text-gray-400 hover:text-gray-500;
+  }
+  .pc-modal__header__close-svg {
+    @apply w-5 h-5 fill-current;
+  }
+  .pc-modal__content {
+    @apply p-5;
+  }
+}

@@ -1,0 +1,52 @@
+@layer components {
+  /* Avatars */
+
+  .pc-avatar--with-image {
+    @apply object-cover rounded-full;
+  }
+  .pc-avatar--with-placeholder-icon {
+    @apply relative inline-block overflow-hidden bg-gray-100 text-gray-300 rounded-full dark:bg-gray-700;
+  }
+  .pc-avatar--with-placeholder-initials {
+    @apply flex items-center justify-center font-semibold text-gray-500 uppercase bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300;
+  }
+  .pc-avatar-group {
+    @apply ring-white ring-2 dark:ring-gray-100;
+  }
+  .pc-avatar__placeholder-icon {
+    @apply relative w-full! h-full! bg-gray-300 top-[12%] scale-[1.15] transform;
+  }
+
+  /* Avatars - sizes */
+
+  .pc-avatar--xs {
+    @apply text-xs w-7 h-7;
+  }
+  .pc-avatar--sm {
+    @apply w-8 h-8 text-sm;
+  }
+  .pc-avatar--md {
+    @apply w-10 h-10 text-base;
+  }
+  .pc-avatar--lg {
+    @apply w-12 h-12 text-lg;
+  }
+  .pc-avatar--xl {
+    @apply text-xl w-14 h-14;
+  }
+  .pc-avatar-group--xs {
+    @apply relative z-0 flex -space-x-2;
+  }
+  .pc-avatar-group--sm {
+    @apply relative z-0 flex -space-x-3;
+  }
+  .pc-avatar-group--md {
+    @apply relative z-0 flex -space-x-4;
+  }
+  .pc-avatar-group--lg {
+    @apply relative z-0 flex -space-x-5;
+  }
+  .pc-avatar-group--xl {
+    @apply relative z-0 flex -space-x-6;
+  }
+}

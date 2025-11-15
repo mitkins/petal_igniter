@@ -1,0 +1,25 @@
+@layer components {
+  /* Container */
+
+  .pc-container {
+    @apply w-full mx-auto sm:px-6 lg:px-8;
+  }
+  .pc-container--sm {
+    @apply max-w-3xl;
+  }
+  .pc-container--md {
+    @apply max-w-5xl;
+  }
+  .pc-container--lg {
+    @apply max-w-7xl;
+  }
+  .pc-container--xl {
+    @apply max-w-[85rem];
+  }
+  .pc-container--full {
+    @apply max-w-full;
+  }
+  .pc-container--mobile-padded {
+    @apply px-4;
+  }
+}

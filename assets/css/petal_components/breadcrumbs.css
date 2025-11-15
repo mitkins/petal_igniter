@@ -1,0 +1,22 @@
+@layer components {
+  /* Breadcrumbs */
+
+  .pc-breadcrumbs {
+    @apply flex items-center;
+  }
+  .pc-breadcrumb {
+    @apply flex text-gray-500 hover:underline dark:text-gray-400;
+  }
+  .pc-breadcrumbs__separator-slash {
+    @apply px-5 text-lg text-gray-300;
+  }
+  .pc-breadcrumbs__separator-chevron {
+    @apply px-3 text-gray-300;
+  }
+  .pc-breadcrumbs__separator-chevron__icon {
+    @apply w-6 h-6;
+  }
+  .pc-breadcrumb-icon {
+    @apply w-6 h-6 shrink-0;
+  }
+}

@@ -1,0 +1,54 @@
+@layer components {
+  /* Pagination */
+
+  .pc-pagination {
+    @apply flex;
+  }
+  .pc-pagination__inner {
+    @apply inline-flex -space-x-px text-sm font-medium;
+  }
+  .pc-pagination__item {
+    @apply inline-flex items-center justify-center leading-5 px-3.5 py-2 border border-gray-200 dark:border-gray-700;
+  }
+  .pc-pagination__item--is-current {
+    @apply text-gray-800 bg-gray-100 dark:bg-gray-800 dark:text-gray-300;
+  }
+  .pc-pagination__item--is-not-current {
+    @apply text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-400;
+  }
+  .pc-pagination__item--current {
+    @apply inline-flex items-center justify-center leading-5 px-3.5 py-2 border border-gray-200 dark:border-gray-700;
+  }
+  .pc-pagination__item__previous {
+    @apply mr-2 inline-flex items-center justify-center rounded-sm leading-5 px-2.5 py-2 bg-white enabled:hover:bg-gray-50 dark:bg-gray-900 enabled:dark:hover:bg-gray-800 border dark:border-gray-700 border-gray-200 text-gray-600 enabled:hover:text-gray-800 disabled:opacity-50;
+  }
+  .pc-pagination__item__previous__chevron {
+    /* !important is needed because heroicon class overrides width and height */
+    @apply w-5! h-5! text-gray-600 dark:text-gray-400;
+  }
+  .pc-pagination__item__next {
+    @apply ml-2 inline-flex items-center justify-center rounded-sm leading-5 px-2.5 py-2 bg-white enabled:hover:bg-gray-50 dark:bg-gray-900 enabled:dark:hover:bg-gray-800 dark:border-gray-700 border border-gray-200 text-gray-600 enabled:hover:text-gray-800 disabled:opacity-50;
+  }
+  .pc-pagination__item__next__chevron {
+    /* !important is needed because heroicon class overrides width and height */
+    @apply w-5! h-5! text-gray-600 dark:text-gray-400;
+  }
+  .pc-pagination__item__ellipsis {
+    @apply inline-flex items-center justify-center leading-5 px-3.5 py-2 bg-white border dark:bg-gray-900 dark:border-gray-700 border-gray-200 text-gray-400;
+  }
+
+  /* Pagination - number(s) rounded box corner style */
+
+  .pc-pagination__item--with-single-box {
+    @apply rounded;
+  }
+  .pc-pagination__item--with-multiple-boxes--left {
+    @apply rounded-l;
+  }
+  .pc-pagination__item--with-multiple-boxes--right {
+    @apply rounded-r;
+  }
+  .pc-pagination__item--with-multiple-boxes--right {
+    @apply rounded-r;
+  }
+}
