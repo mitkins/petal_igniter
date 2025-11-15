@@ -95,8 +95,11 @@ if Code.ensure_loaded?(Igniter) do
 
         # Do your work here and return an updated igniter
         igniter
-        |> Igniter.copy_template(component_case_template, "test/support/component_case.ex",
-          module_prefix: module_prefix
+        |> Igniter.copy_template(
+          component_case_template,
+          "test/support/component_case.ex",
+          [module_prefix: module_prefix],
+          on_exists: :overwrite
         )
         |> PetalIgniter.Igniter.Templates.reduce_into(tests, fn {module, test_file}, igniter ->
           test_template = Path.join(templates_folder, test_file)
@@ -105,9 +108,11 @@ if Code.ensure_loaded?(Igniter) do
             PetalIgniter.Igniter.Module.proper_location(igniter, base_module, module, :test)
 
           igniter
-          |> Igniter.copy_template(test_template, test_file,
-            module_prefix: module_prefix,
-            js_lib: igniter.args.options[:js_lib]
+          |> Igniter.copy_template(
+            test_template,
+            test_file,
+            [module_prefix: module_prefix, js_lib: igniter.args.options[:js_lib]],
+            on_exists: :overwrite
           )
         end)
       else

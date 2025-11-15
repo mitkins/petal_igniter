@@ -120,7 +120,9 @@ if Code.ensure_loaded?(Igniter) do
         |> Igniter.compose_task("petal.heroicons.install")
         |> Igniter.compose_task("petal.tailwind.install")
         |> Igniter.compose_task("petal_components.css.install")
-        |> Igniter.copy_template(helpers_template, helpers_file, module_prefix: module_prefix)
+        |> Igniter.copy_template(helpers_template, helpers_file, [module_prefix: module_prefix],
+          on_exists: :overwrite
+        )
         |> PetalIgniter.Igniter.Templates.reduce_into(components, fn {module, file},
                                                                      acc_igniter ->
           component_template = Path.join(templates_folder, file)
@@ -129,9 +131,11 @@ if Code.ensure_loaded?(Igniter) do
             PetalIgniter.Igniter.Module.proper_location(acc_igniter, petal_module, module)
 
           acc_igniter
-          |> Igniter.copy_template(component_template, component_file,
-            module_prefix: module_prefix,
-            js_lib: acc_igniter.args.options[:js_lib]
+          |> Igniter.copy_template(
+            component_template,
+            component_file,
+            [module_prefix: module_prefix, js_lib: acc_igniter.args.options[:js_lib]],
+            on_exists: :overwrite
           )
         end)
         |> Igniter.compose_task("petal_components.use")

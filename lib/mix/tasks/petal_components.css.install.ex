@@ -109,10 +109,13 @@ if Code.ensure_loaded?(Igniter) do
           |> Path.join(css_file)
 
         acc_igniter
-        |> Igniter.copy_template(css_template, css_file, [])
+        |> Igniter.copy_template(css_template, css_file, [], on_exists: :overwrite)
       end)
-      |> Igniter.copy_template(default_css_template, "assets/css/default.css",
-        css_files: css_files
+      |> Igniter.copy_template(
+        default_css_template,
+        "assets/css/default.css",
+        [css_files: css_files],
+        on_exists: :overwrite
       )
     end
 
@@ -130,12 +133,17 @@ if Code.ensure_loaded?(Igniter) do
           |> Path.join(css_file)
 
         acc_igniter
-        |> Igniter.copy_template(css_template, css_file, [])
+        |> Igniter.copy_template(css_template, css_file, [], on_exists: :overwrite)
       end)
-      |> Igniter.copy_template(default_css_template, "assets/css/petal_components.css",
-        css_files: css_files
+      |> Igniter.copy_template(
+        default_css_template,
+        "assets/css/petal_components.css",
+        [css_files: css_files],
+        on_exists: :overwrite
       )
-      |> Igniter.copy_template(colors_css_template, "assets/css/colors.css", [])
+      |> Igniter.copy_template(colors_css_template, "assets/css/colors.css", [],
+        on_exists: :overwrite
+      )
       |> then(fn igniter ->
         if Igniter.exists?(igniter, @app_css) do
           igniter
