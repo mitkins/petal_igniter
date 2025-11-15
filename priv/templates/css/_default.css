@@ -1,5 +1,5 @@
 <%= for css_file <- @css_files do
-%>@import "./<%= css_file %>";
+%>@import "./petal_components/<%= css_file %>";
 <% end %>
 @layer base {
   /*

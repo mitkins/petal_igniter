@@ -102,7 +102,11 @@ if Code.ensure_loaded?(Igniter) do
       igniter
       |> PetalIgniter.Templates.reduce_into(css_files, fn css_file, acc_igniter ->
         css_template = Path.join(templates_folder, css_file)
-        css_file = Path.join(@css_folder, css_file)
+
+        css_file =
+          @css_folder
+          |> Path.join("petal_components")
+          |> Path.join(css_file)
 
         acc_igniter
         |> Igniter.copy_template(css_template, css_file, [])
@@ -119,7 +123,11 @@ if Code.ensure_loaded?(Igniter) do
       igniter
       |> PetalIgniter.Templates.reduce_into(css_files, fn css_file, acc_igniter ->
         css_template = Path.join(templates_folder, css_file)
-        css_file = Path.join(@css_folder, css_file)
+
+        css_file =
+          @css_folder
+          |> Path.join("petal_components")
+          |> Path.join(css_file)
 
         acc_igniter
         |> Igniter.copy_template(css_template, css_file, [])
