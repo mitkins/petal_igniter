@@ -1,12 +1,12 @@
-defmodule PetalIgniter.Css do
+defmodule PetalIgniter.Igniter.Css do
   @type directive :: :import | :plugin
 
   def maybe_add_import(igniter, css_path, import) do
-    PetalIgniter.Css.maybe_add_directive(igniter, css_path, :import, import, nil)
+    maybe_add_directive(igniter, css_path, :import, import, nil)
   end
 
   def maybe_add_plugin(igniter, css_path, plugin) do
-    PetalIgniter.Css.maybe_add_directive(igniter, css_path, :plugin, plugin, :import)
+    maybe_add_directive(igniter, css_path, :plugin, plugin, :import)
   end
 
   @spec maybe_add_directive(Igniter.t(), String, directive(), String, directive()) :: Igniter.t()

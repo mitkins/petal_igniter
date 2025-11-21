@@ -78,30 +78,27 @@ if Code.ensure_loaded?(Igniter) do
     def igniter(igniter) do
       component_names = igniter.args.options[:component]
 
-      with :ok <- PetalIgniter.Components.validate_component_names(component_names) do
-        templates_folder =
-          Igniter.Project.Application.priv_dir(igniter, ["templates", "css"])
-
-        css_files = PetalIgniter.Components.css_files(component_names)
+      with :ok <- PetalIgniter.Mix.Components.validate_component_names(component_names) do
+        css_files = PetalIgniter.Mix.Components.css_files(component_names)
 
         # Do your work here and return an updated igniter
         if igniter.args.options[:lib] do
-          library_css(igniter, templates_folder, css_files)
+          library_css(igniter, css_files)
         else
-          web_module_css(igniter, templates_folder, css_files)
+          web_module_css(igniter, css_files)
         end
       else
         {:error, rejected} ->
-          PetalIgniter.Templates.add_issues_for_rejected_components(igniter, rejected)
+          PetalIgniter.Igniter.Templates.add_issues_for_rejected_components(igniter, rejected)
       end
     end
 
-    defp library_css(igniter, templates_folder, css_files) do
-      default_css_template = Path.join(templates_folder, "_default.css")
+    defp library_css(igniter, css_files) do
+      default_css_template = PetalIgniter.Igniter.Project.css_template(igniter, "_default.css")
 
       igniter
-      |> PetalIgniter.Templates.reduce_into(css_files, fn css_file, acc_igniter ->
-        css_template = Path.join(templates_folder, css_file)
+      |> PetalIgniter.Igniter.Templates.reduce_into(css_files, fn css_file, acc_igniter ->
+        css_template = PetalIgniter.Igniter.Project.css_template(igniter, css_file)
 
         css_file =
           @css_folder
@@ -109,20 +106,23 @@ if Code.ensure_loaded?(Igniter) do
           |> Path.join(css_file)
 
         acc_igniter
-        |> Igniter.copy_template(css_template, css_file, [])
+        |> Igniter.copy_template(css_template, css_file, [], on_exists: :overwrite)
       end)
-      |> Igniter.copy_template(default_css_template, "assets/css/default.css",
-        css_files: css_files
+      |> Igniter.copy_template(
+        default_css_template,
+        "assets/css/default.css",
+        [css_files: css_files],
+        on_exists: :overwrite
       )
     end
 
-    defp web_module_css(igniter, templates_folder, css_files) do
-      default_css_template = Path.join(templates_folder, "_default.css")
-      colors_css_template = Path.join(templates_folder, "_colors.css")
+    defp web_module_css(igniter, css_files) do
+      default_css_template = PetalIgniter.Igniter.Project.css_template(igniter, "_default.css")
+      colors_css_template = PetalIgniter.Igniter.Project.css_template(igniter, "_colors.css")
 
       igniter
-      |> PetalIgniter.Templates.reduce_into(css_files, fn css_file, acc_igniter ->
-        css_template = Path.join(templates_folder, css_file)
+      |> PetalIgniter.Igniter.Templates.reduce_into(css_files, fn css_file, acc_igniter ->
+        css_template = PetalIgniter.Igniter.Project.css_template(igniter, css_file)
 
         css_file =
           @css_folder
@@ -130,19 +130,24 @@ if Code.ensure_loaded?(Igniter) do
           |> Path.join(css_file)
 
         acc_igniter
-        |> Igniter.copy_template(css_template, css_file, [])
+        |> Igniter.copy_template(css_template, css_file, [], on_exists: :overwrite)
       end)
-      |> Igniter.copy_template(default_css_template, "assets/css/petal_components.css",
-        css_files: css_files
+      |> Igniter.copy_template(
+        default_css_template,
+        "assets/css/petal_components.css",
+        [css_files: css_files],
+        on_exists: :overwrite
       )
-      |> Igniter.copy_template(colors_css_template, "assets/css/colors.css", [])
+      |> Igniter.copy_template(colors_css_template, "assets/css/colors.css", [],
+        on_exists: :overwrite
+      )
       |> then(fn igniter ->
         if Igniter.exists?(igniter, @app_css) do
           igniter
-          |> PetalIgniter.Css.maybe_add_import(@app_css, "./petal_components.css")
-          |> PetalIgniter.Css.maybe_add_import(@app_css, "./colors.css")
-          |> PetalIgniter.Css.maybe_add_plugin(@app_css, "@tailwindcss/typography")
-          |> PetalIgniter.Css.maybe_add_plugin(@app_css, "@tailwindcss/forms")
+          |> PetalIgniter.Igniter.Css.maybe_add_import(@app_css, "./petal_components.css")
+          |> PetalIgniter.Igniter.Css.maybe_add_import(@app_css, "./colors.css")
+          |> PetalIgniter.Igniter.Css.maybe_add_plugin(@app_css, "@tailwindcss/typography")
+          |> PetalIgniter.Igniter.Css.maybe_add_plugin(@app_css, "@tailwindcss/forms")
         else
           Igniter.add_warning(igniter, "Could not find #{@app_css}. Skipping CSS imports.")
         end

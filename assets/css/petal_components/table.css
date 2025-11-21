@@ -1,0 +1,43 @@
+@layer components {
+  /* Table */
+
+  .pc-table--basic {
+    @apply min-w-full overflow-hidden rounded-xs shadow-sm table-auto ring-1 ring-gray-200 dark:ring-gray-800 sm:rounded;
+  }
+  .pc-table--ghost {
+    @apply min-w-full overflow-hidden table-auto;
+  }
+  .pc-table__th {
+    @apply px-6 py-3 text-sm font-semibold tracking-wider text-left text-gray-900 bg-gray-50 dark:bg-gray-800 dark:text-gray-300;
+  }
+  .pc-table thead {
+    @apply border-b dark:border-gray-800 dark:bg-gray-900;
+  }
+  .pc-table__tr {
+    @apply bg-white border-b border-gray-200 dark:border-gray-800 dark:bg-gray-900 last:border-none;
+  }
+  .pc-table__tr--row-click {
+    @apply hover:bg-gray-50 dark:hover:bg-gray-800;
+  }
+  .pc-table__td {
+    @apply px-6 py-4 text-sm text-gray-500 dark:text-gray-400;
+  }
+  .pc-table__td--first-col {
+    @apply font-semibold;
+  }
+  .pc-table__td--row-click {
+    @apply hover:cursor-pointer;
+  }
+  .pc-table__user-inner-td {
+    @apply flex items-center gap-3;
+  }
+  .pc-table__user-inner-td__inner {
+    @apply flex flex-col overflow-hidden;
+  }
+  .pc-table__user-inner-td__label {
+    @apply overflow-hidden font-medium text-gray-900 whitespace-nowrap text-ellipsis dark:text-gray-300;
+  }
+  .pc-table__user-inner-td__sub-label {
+    @apply overflow-hidden font-normal text-gray-500 whitespace-nowrap text-ellipsis;
+  }
+}

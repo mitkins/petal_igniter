@@ -89,17 +89,25 @@ if Code.ensure_loaded?(Igniter) do
          ]}
       )
       |> then(fn igniter ->
-        if igniter.args.options[:lib] do
-          igniter
-        else
-          templates_folder =
-            Igniter.Project.Application.priv_dir(igniter, ["templates", "css"])
+        cond do
+          igniter.args.options[:lib] ->
+            igniter
 
-          heroicons_js_template = Path.join(templates_folder, "_tailwind_heroicons.js")
+          Igniter.exists?(igniter, @app_css) ->
+            heroicons_js_template =
+              PetalIgniter.Igniter.Project.css_template(igniter, "_tailwind_heroicons.js")
 
-          igniter
-          |> Igniter.copy_template(heroicons_js_template, "assets/css/tailwind_heroicons.js", [])
-          |> PetalIgniter.Css.maybe_add_plugin(@app_css, "./tailwind_heroicons.js")
+            igniter
+            |> Igniter.copy_template(
+              heroicons_js_template,
+              "assets/css/tailwind_heroicons.js",
+              [],
+              on_exists: :overwrite
+            )
+            |> PetalIgniter.Igniter.Css.maybe_add_plugin(@app_css, "./tailwind_heroicons.js")
+
+          true ->
+            Igniter.add_warning(igniter, "Could not find #{@app_css}. Skipping CSS imports.")
         end
       end)
     end

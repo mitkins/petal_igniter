@@ -1,0 +1,35 @@
+@import "./petal_components/accordion.css";
+@import "./petal_components/alert.css";
+@import "./petal_components/avatar.css";
+@import "./petal_components/badge.css";
+@import "./petal_components/breadcrumbs.css";
+@import "./petal_components/button.css";
+@import "./petal_components/button_group.css";
+@import "./petal_components/card.css";
+@import "./petal_components/container.css";
+@import "./petal_components/dropdown.css";
+@import "./petal_components/form.css";
+@import "./petal_components/loading.css";
+@import "./petal_components/marquee.css";
+@import "./petal_components/menu.css";
+@import "./petal_components/modal.css";
+@import "./petal_components/pagination.css";
+@import "./petal_components/progress.css";
+@import "./petal_components/rating.css";
+@import "./petal_components/skeleton.css";
+@import "./petal_components/slide_over.css";
+@import "./petal_components/stepper.css";
+@import "./petal_components/table.css";
+@import "./petal_components/tabs.css";
+@import "./petal_components/typography.css";
+
+@layer base {
+  /*
+    Petal Component buttons use the pointer by default.
+    Delete this to fallback to Tailwind defaults
+  */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
