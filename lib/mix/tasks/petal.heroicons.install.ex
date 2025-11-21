@@ -103,7 +103,8 @@ if Code.ensure_loaded?(Igniter) do
             |> Igniter.copy_template(
               heroicons_js_template,
               "assets/css/tailwind_heroicons.js",
-              []
+              [],
+              on_exists: :overwrite
             )
             |> PetalIgniter.Igniter.Css.maybe_add_plugin(@app_css, "./tailwind_heroicons.js")
 
