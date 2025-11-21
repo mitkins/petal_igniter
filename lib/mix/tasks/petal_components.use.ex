@@ -162,28 +162,47 @@ if Code.ensure_loaded?(Igniter) do
 
     defp inject_petal_use(zipper, petal_module) do
       with {:ok, zipper} <- Igniter.Code.Function.move_to_defp(zipper, :html_helpers, 0),
-           {:ok, zipper} <- Igniter.Code.Common.move_to_do_block(zipper),
-           {:ok, zipper} <- move_to_gettext_use(zipper) do
-        petal_module_name =
-          petal_module
-          |> Module.split()
-          |> Enum.join(".")
+           {:ok, quote_zipper} <- Igniter.Code.Common.move_to_do_block(zipper),
+           quote_node <- Sourceror.Zipper.node(quote_zipper) do
+        # This code checks for direct child references to `use xxx`. It avoids dipping into
+        # the unquoted code (where yet more refenres to `use` exist)
+        use_calls =
+          case quote_node do
+            {:__block__, _, children} ->
+              children
+              |> Enum.with_index()
+              |> Enum.filter(fn {child, _idx} -> match?({:use, _, _}, child) end)
+              |> Enum.map(fn {_child, idx} ->
+                # Start at first child, then move right idx times
+                zipper = Sourceror.Zipper.down(quote_zipper)
+
+                for _ <- 1..idx, reduce: zipper do
+                  acc_zipper -> Sourceror.Zipper.right(acc_zipper)
+                end
+              end)
+
+            _ ->
+              []
+          end
+
+        new_code =
+          """
+          # Petal Components
+          use #{PetalComponents.Igniter.Module.remove_prefix(petal_module)}
+          """
 
         zipper =
-          zipper
-          |> Igniter.Code.Common.add_code(
-            """
-            use #{petal_module_name}
-            """,
-            placement: :before
-          )
+          case use_calls do
+            [] ->
+              Igniter.Code.Common.add_code(quote_zipper, new_code, placement: :before)
+
+            _ ->
+              last_use = List.last(use_calls)
+              Igniter.Code.Common.add_code(last_use, new_code, placement: :after)
+          end
 
         {:ok, zipper}
       end
-    end
-
-    defp move_to_gettext_use(zipper) do
-      Igniter.Code.Common.move_to_pattern(zipper, {:use, _, [{:__aliases__, _, [:Gettext]}, _]})
     end
   end
 else
