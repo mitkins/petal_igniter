@@ -94,10 +94,8 @@ if Code.ensure_loaded?(Igniter) do
             igniter
 
           Igniter.exists?(igniter, @app_css) ->
-            templates_folder =
-              Igniter.Project.Application.priv_dir(igniter, ["templates", "css"])
-
-            heroicons_js_template = Path.join(templates_folder, "_tailwind_heroicons.js")
+            heroicons_js_template =
+              PetalIgniter.Igniter.Project.css_template(igniter, "_tailwind_heroicons.js")
 
             igniter
             |> Igniter.copy_template(

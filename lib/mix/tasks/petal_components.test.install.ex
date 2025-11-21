@@ -76,10 +76,8 @@ if Code.ensure_loaded?(Igniter) do
       component_names = igniter.args.options[:component]
 
       with :ok <- PetalIgniter.Mix.Components.validate_component_names(component_names) do
-        templates_folder =
-          Igniter.Project.Application.priv_dir(igniter, ["templates", "test"])
-
-        component_case_template = Path.join(templates_folder, "_component_case.ex")
+        component_case_template =
+          PetalIgniter.Igniter.Project.test_template(igniter, "_component_case.ex")
 
         base_module =
           if igniter.args.options[:lib] do
@@ -102,7 +100,7 @@ if Code.ensure_loaded?(Igniter) do
           on_exists: :overwrite
         )
         |> PetalIgniter.Igniter.Templates.reduce_into(tests, fn {module, test_file}, igniter ->
-          test_template = Path.join(templates_folder, test_file)
+          test_template = PetalIgniter.Igniter.Project.test_template(igniter, test_file)
 
           test_file =
             PetalIgniter.Igniter.Module.proper_location(igniter, base_module, module, :test)

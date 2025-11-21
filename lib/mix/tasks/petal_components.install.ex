@@ -91,9 +91,6 @@ if Code.ensure_loaded?(Igniter) do
       component_names = igniter.args.options[:component]
 
       with :ok <- PetalIgniter.Mix.Components.validate_component_names(component_names) do
-        templates_folder =
-          Igniter.Project.Application.priv_dir(igniter, ["templates", "component"])
-
         petal_module =
           if igniter.args.options[:lib] do
             Igniter.Project.Module.module_name_prefix(igniter)
@@ -104,8 +101,11 @@ if Code.ensure_loaded?(Igniter) do
 
         module_prefix = PetalIgniter.Igniter.Module.remove_prefix(petal_module)
 
-        helpers_template = Path.join(templates_folder, "_helpers.ex")
-        helpers_file = PetalIgniter.Igniter.Module.proper_location(igniter, petal_module, Helpers)
+        helpers_template =
+          PetalIgniter.Igniter.Project.component_template(igniter, "_helpers.ex")
+
+        helpers_file =
+          PetalIgniter.Igniter.Module.proper_location(igniter, petal_module, Helpers)
 
         components = PetalIgniter.Mix.Components.components(component_names)
         deps = PetalIgniter.Mix.Components.deps(component_names)
@@ -125,7 +125,8 @@ if Code.ensure_loaded?(Igniter) do
         )
         |> PetalIgniter.Igniter.Templates.reduce_into(components, fn {module, file},
                                                                      acc_igniter ->
-          component_template = Path.join(templates_folder, file)
+          component_template =
+            PetalIgniter.Igniter.Project.component_template(acc_igniter, file)
 
           component_file =
             PetalIgniter.Igniter.Module.proper_location(acc_igniter, petal_module, module)

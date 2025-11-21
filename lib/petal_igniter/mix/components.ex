@@ -86,7 +86,7 @@ defmodule PetalIgniter.Mix.Components do
     |> filter_by_name(component_names)
     |> Enum.filter(fn {module_name, _deps} -> !(module_name in @private) end)
     |> Enum.map(fn {module_name, _deps} ->
-      {PetalComponents.Igniter.Module.to_module(module_name), elixir_file(module_name)}
+      {PetalIgniter.Igniter.Module.to_module(module_name), elixir_file(module_name)}
     end)
   end
 

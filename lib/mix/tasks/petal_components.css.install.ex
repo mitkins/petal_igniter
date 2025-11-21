@@ -79,16 +79,13 @@ if Code.ensure_loaded?(Igniter) do
       component_names = igniter.args.options[:component]
 
       with :ok <- PetalIgniter.Mix.Components.validate_component_names(component_names) do
-        templates_folder =
-          Igniter.Project.Application.priv_dir(igniter, ["templates", "css"])
-
         css_files = PetalIgniter.Mix.Components.css_files(component_names)
 
         # Do your work here and return an updated igniter
         if igniter.args.options[:lib] do
-          library_css(igniter, templates_folder, css_files)
+          library_css(igniter, css_files)
         else
-          web_module_css(igniter, templates_folder, css_files)
+          web_module_css(igniter, css_files)
         end
       else
         {:error, rejected} ->
@@ -96,12 +93,12 @@ if Code.ensure_loaded?(Igniter) do
       end
     end
 
-    defp library_css(igniter, templates_folder, css_files) do
-      default_css_template = Path.join(templates_folder, "_default.css")
+    defp library_css(igniter, css_files) do
+      default_css_template = PetalIgniter.Igniter.Project.css_template(igniter, "_default.css")
 
       igniter
       |> PetalIgniter.Igniter.Templates.reduce_into(css_files, fn css_file, acc_igniter ->
-        css_template = Path.join(templates_folder, css_file)
+        css_template = PetalIgniter.Igniter.Project.css_template(igniter, css_file)
 
         css_file =
           @css_folder
@@ -119,13 +116,13 @@ if Code.ensure_loaded?(Igniter) do
       )
     end
 
-    defp web_module_css(igniter, templates_folder, css_files) do
-      default_css_template = Path.join(templates_folder, "_default.css")
-      colors_css_template = Path.join(templates_folder, "_colors.css")
+    defp web_module_css(igniter, css_files) do
+      default_css_template = PetalIgniter.Igniter.Project.css_template(igniter, "_default.css")
+      colors_css_template = PetalIgniter.Igniter.Project.css_template(igniter, "_colors.css")
 
       igniter
       |> PetalIgniter.Igniter.Templates.reduce_into(css_files, fn css_file, acc_igniter ->
-        css_template = Path.join(templates_folder, css_file)
+        css_template = PetalIgniter.Igniter.Project.css_template(igniter, css_file)
 
         css_file =
           @css_folder

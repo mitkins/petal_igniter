@@ -86,9 +86,6 @@ if Code.ensure_loaded?(Igniter) do
       component_names = igniter.args.options[:component]
 
       with :ok <- PetalIgniter.Mix.Components.validate_component_names(component_names) do
-        templates_folder =
-          Igniter.Project.Application.priv_dir(igniter, ["templates", "component"])
-
         public_components = PetalIgniter.Mix.Components.public_components(component_names)
 
         web_module = Igniter.Libs.Phoenix.web_module(igniter)
@@ -96,7 +93,9 @@ if Code.ensure_loaded?(Igniter) do
         petal_module = Module.concat(web_module, Components.PetalComponents)
         module_prefix = PetalIgniter.Igniter.Module.remove_prefix(components_module)
 
-        petal_components_template = Path.join(templates_folder, "_petal_components.ex")
+        petal_components_template =
+          PetalIgniter.Igniter.Project.component_template(igniter, "_petal_components.ex")
+
         petal_components_file = Igniter.Project.Module.proper_location(igniter, petal_module)
 
         igniter
@@ -187,8 +186,8 @@ if Code.ensure_loaded?(Igniter) do
 
         new_code =
           """
-          # Petal Components
-          use #{PetalComponents.Igniter.Module.remove_prefix(petal_module)}
+          # Add Petal Components
+          use #{PetalIgniter.Igniter.Module.remove_prefix(petal_module)}
           """
 
         zipper =
