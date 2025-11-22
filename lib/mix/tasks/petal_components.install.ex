@@ -76,7 +76,7 @@ if Code.ensure_loaded?(Igniter) do
           "petal_components.test.install"
         ],
         # `OptionParser` schema
-        schema: [lib: :boolean, js_lib: :string, component: :keep],
+        schema: [lib: :boolean, no_deps: :boolean, js_lib: :string, component: :keep],
         # Default values for the options in the `schema`
         defaults: [js_lib: "alpine_js", component: []],
         # CLI aliases
@@ -108,7 +108,17 @@ if Code.ensure_loaded?(Igniter) do
           PetalIgniter.Igniter.Module.proper_location(igniter, petal_module, Helpers)
 
         components = PetalIgniter.Mix.Components.components(component_names)
-        deps = PetalIgniter.Mix.Components.deps(component_names)
+
+        deps =
+          PetalIgniter.Mix.Components.dep_names(component_names)
+          |> PetalIgniter.Mix.Components.components()
+
+        components =
+          if igniter.args.options[:no_deps] do
+            components
+          else
+            Enum.uniq(components ++ deps)
+          end
 
         # Do your work here and return an updated igniter
         igniter

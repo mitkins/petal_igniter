@@ -88,6 +88,17 @@ if Code.ensure_loaded?(Igniter) do
       with :ok <- PetalIgniter.Mix.Components.validate_component_names(component_names) do
         public_components = PetalIgniter.Mix.Components.public_components(component_names)
 
+        public_deps =
+          PetalIgniter.Mix.Components.public_dep_names(component_names)
+          |> PetalIgniter.Mix.Components.public_components()
+
+        public_components =
+          if igniter.args.options[:no_deps] do
+            public_components
+          else
+            Enum.uniq(public_components ++ public_deps)
+          end
+
         web_module = Igniter.Libs.Phoenix.web_module(igniter)
         components_module = Module.concat(web_module, Components)
         petal_module = Module.concat(web_module, Components.PetalComponents)

@@ -63,22 +63,27 @@ defmodule PetalIgniter.Mix.Components do
     end
   end
 
+  def dep_names(component_names) do
+    @components
+    |> filter_by_name(component_names)
+    |> Enum.flat_map(fn {_module_name, deps} -> deps end)
+    |> Enum.uniq()
+  end
+
+  def public_dep_names(component_names) do
+    @components
+    |> filter_by_name(component_names)
+    |> Enum.filter(fn {module_name, _deps} -> !(module_name in @private) end)
+    |> Enum.flat_map(fn {_module_name, deps} -> deps end)
+    |> Enum.uniq()
+  end
+
   def components(component_names) do
     @components
     |> filter_by_name(component_names)
     |> Enum.map(fn {module_name, _deps} ->
       {PetalIgniter.Igniter.Module.to_module(module_name), elixir_file(module_name)}
     end)
-  end
-
-  def deps(component_names) do
-    deps =
-      @components
-      |> filter_by_name(component_names)
-      |> Enum.flat_map(fn {_module_name, deps} -> deps end)
-      |> Enum.uniq()
-
-    components(deps)
   end
 
   def public_components(component_names) do

@@ -61,7 +61,7 @@ if Code.ensure_loaded?(Igniter) do
         # This ensures your option schema includes options from nested tasks
         composes: [],
         # `OptionParser` schema
-        schema: [lib: :boolean, js_lib: :string, component: :keep],
+        schema: [lib: :boolean, no_deps: :boolean, js_lib: :string, component: :keep],
         # Default values for the options in the `schema`
         defaults: [js_lib: "alpine_js", component: []],
         # CLI aliases
@@ -90,6 +90,17 @@ if Code.ensure_loaded?(Igniter) do
         module_prefix = PetalIgniter.Igniter.Module.remove_prefix(base_module)
 
         tests = PetalIgniter.Mix.Components.tests(component_names)
+
+        deps =
+          PetalIgniter.Mix.Components.dep_names(component_names)
+          |> PetalIgniter.Mix.Components.tests()
+
+        tests =
+          if igniter.args.options[:no_deps] do
+            tests
+          else
+            Enum.uniq(tests ++ deps)
+          end
 
         # Do your work here and return an updated igniter
         igniter
