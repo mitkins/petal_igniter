@@ -124,6 +124,7 @@ if Code.ensure_loaded?(Igniter) do
             on_exists: :overwrite
           )
         end)
+        |> PetalIgniter.Igniter.Templates.add_warnings_for_missing_deps(base_module, deps, :test)
       else
         {:error, rejected} ->
           PetalIgniter.Igniter.Templates.add_issues_for_rejected_components(igniter, rejected)
