@@ -81,7 +81,7 @@ if Code.ensure_loaded?(Igniter) do
       with :ok <- PetalIgniter.Mix.Components.validate_component_names(component_names) do
         css_files = PetalIgniter.Mix.Components.css_files(component_names)
 
-        css_deps =
+        deps =
           PetalIgniter.Mix.Components.dep_names(component_names)
           |> PetalIgniter.Mix.Components.css_files()
 
@@ -89,7 +89,7 @@ if Code.ensure_loaded?(Igniter) do
           if igniter.args.options[:no_deps] do
             css_files
           else
-            Enum.uniq(css_files ++ css_deps)
+            Enum.uniq(css_files ++ deps)
           end
 
         # Do your work here and return an updated igniter
@@ -98,6 +98,10 @@ if Code.ensure_loaded?(Igniter) do
         else
           web_module_css(igniter, css_files)
         end
+        |> PetalIgniter.Igniter.Templates.add_warnings_for_missing_css(
+          Path.join(@app_css, "petal_components"),
+          deps
+        )
       else
         {:error, rejected} ->
           PetalIgniter.Igniter.Templates.add_issues_for_rejected_components(igniter, rejected)

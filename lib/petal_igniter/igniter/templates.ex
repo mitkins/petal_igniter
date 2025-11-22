@@ -18,6 +18,22 @@ defmodule PetalIgniter.Igniter.Templates do
     end)
   end
 
+  def add_warnings_for_missing_css(igniter, base_folder, deps) do
+    deps
+    |> Enum.reduce(igniter, fn file, acc_igniter ->
+      css_file = Path.join(base_folder, file)
+
+      if !Igniter.exists?(acc_igniter, css_file) do
+        Igniter.add_warning(
+          acc_igniter,
+          "Missing dependency file '#{css_file}'"
+        )
+      else
+        acc_igniter
+      end
+    end)
+  end
+
   def add_issues_for_rejected_components(igniter, rejected) do
     rejected
     |> Enum.reduce(igniter, fn rejected_component_name, acc_igniter ->
