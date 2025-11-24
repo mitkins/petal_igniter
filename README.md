@@ -4,7 +4,7 @@ Prototype to enable Igniter for Petal Components.
 
 ## Goals
 
-The primay goal of this prototype is to achieve the following:
+The primary goal of this prototype is to achieve the following:
 
 ```bash
 # From within an existing project
@@ -14,13 +14,13 @@ mix petal_components.install
 mix igniter.new app_name --install petal_components
 ```
 
-And if you wanted to install a subset of components:
+And if you want to install a subset of components:
 
 ```bash
 mix petal_components.install -c button -c alert
 ```
 
-A secondary goal of this prototype will be to achieve backwards compatibility with the existing library. Though not strictly necessary, it does mean that users can use the updated version of Petal Components library without Igniter. It also means that GitHub Actions, accessibility and code coverage could continue with minimal adjustments.
+A secondary goal of this prototype is to achieve backwards compatibility with the existing library. Though not strictly necessary, it does mean that users can use the updated version of Petal Components library without Igniter. It also means that GitHub Actions, accessibility and code coverage can continue with minimal adjustments.
 
 NB - the investigation into backwards compatibility is more of an exploration than a recommendation.
 
@@ -48,7 +48,7 @@ At it's heart, each component is broken down into 3 files - a component, a test 
 * `test/your_project_web/components/petal_components/button_test.exs`
 * `assets/css/petal_components/button.css`
 
-Each file is generated from an EEx template. EEx templates can be found in this project under `/priv/templates` in one of three folders - `component`, `test` and `css`. For example, the source templates for the button conponent are:
+Each file is generated from an EEx template. EEx templates can be found in this project under `/priv/templates` in one of three folders - `component`, `test` or `css`. For example, the source templates for the button conponent are:
 
 * `priv/templates/components/button.ex`
 * `priv/templates/test/button_test.exs`
@@ -56,7 +56,7 @@ Each file is generated from an EEx template. EEx templates can be found in this 
 
 Taking a leaf from the Phoenix repo, EEx templates end in their relevant file extension (instead of `.eex`). The net effect of this is that, for the most part, syntax highlighting works for these files. Things get a little hairy for the `.css` templates. For example, template interpolation in `priv/templates/css/_default` causes Zed to report an error. But generally, it seems that benefit of syntax highlighting is worth it.
 
-Speaking of css, I've broken up the contents of `assets/css/default.css`. Thanks to Tailwind 4, each component can have it's own css file that's imported into `default.css`. CSS that doesn't belong inside a component can be added to `default.css`. It also means that you could add css to a component file that does not necessarily belong to the `components` layer.
+Speaking of css, I've broken up the contents of `assets/css/default.css`. Thanks to Tailwind 4, each component can have it's own css file that's imported into `default.css`. CSS that doesn't belong inside a component can be added to `default.css`. It also means that you could add css to a component file that does not necessarily belong to `@layer components { .. }`.
 
 ## Component Metadata
 
@@ -67,8 +67,8 @@ In some cases, there is no test or css file. Also, there is a file (`PaginationI
 Igniter tasks are as follows:
 
 * `petal_components.install.ex` - this is the main mix task, curently it sets up depedencies, generates the main component files and composes sub-tasks
-* `petal_components.css.install.ex` - generates component css files and other supporting files. Integrates Petal Components css with with `app.css`
-* `petal_components.test.install.ex` - generates test files for components and supporting test files
+* `petal_components.css.ex` - generates component css files and other supporting files. Integrates Petal Components css with `app.css`
+* `petal_components.test.ex` - generates test files for components and supporting test files
 * `petal_components.use.ex` - generates `petal_components.ex` and integrates its use into the web application
 * `petal.tailwind.install.ex` - a general Igniter task to install and configure Tailwind 4 for a web app
 * `petal.heroicons.install.ex` - a general Igniter task to add heroicons dependency and install the Tailwind heroicons javascript plugin
@@ -115,7 +115,7 @@ Controls whether a component generates Alpine.js or plain javascript. This is a 
 
 In the case of a web app, Igniter will generate Petal Components inside the users project. Giving them their own copy. They can adjust Petal Components as they see fit. If the user wishes, they could re-generate part or all of Petal Components over their existing project - the choice is theirs. For example, if there was a new component in a future release of Petal Components - they could selectively generate that one component.
 
-In the case of the `--lib` option, files are generated for the Petal Components library. This means that the templates are "the one true source" for both the Petal Components library and the components generated inside a users web app. After updating a component, typically you'd run the following command:
+In the case of the `--lib` option, files are generated for the Petal Components library. This means that the templates are "the one true source" for both the Petal Components library and the components generated inside a users web app. After updating a template, typically you'd run the following command:
 
 ```bash
 mix petal_components.install --lib

@@ -72,8 +72,8 @@ if Code.ensure_loaded?(Igniter) do
         composes: [
           "petal.heroicons.install",
           "petal.tailwind.install",
-          "petal_components.css.install",
-          "petal_components.test.install"
+          "petal_components.css",
+          "petal_components.test"
         ],
         # `OptionParser` schema
         schema: [lib: :boolean, no_deps: :boolean, js_lib: :string, component: :keep],
@@ -129,7 +129,7 @@ if Code.ensure_loaded?(Igniter) do
         |> Igniter.Project.Deps.add_dep({:lazy_html, ">= 0.0.0", only: :test})
         |> Igniter.compose_task("petal.heroicons.install")
         |> Igniter.compose_task("petal.tailwind.install")
-        |> Igniter.compose_task("petal_components.css.install")
+        |> Igniter.compose_task("petal_components.css")
         |> Igniter.copy_template(helpers_template, helpers_file, [module_prefix: module_prefix],
           on_exists: :overwrite
         )
@@ -150,7 +150,7 @@ if Code.ensure_loaded?(Igniter) do
           )
         end)
         |> Igniter.compose_task("petal_components.use")
-        |> Igniter.compose_task("petal_components.test.install")
+        |> Igniter.compose_task("petal_components.test")
         |> PetalIgniter.Igniter.Templates.add_warnings_for_missing_deps(petal_module, deps)
       else
         {:error, rejected} ->

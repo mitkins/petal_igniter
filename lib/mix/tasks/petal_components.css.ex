@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.PetalComponents.Css.Install.Docs do
+defmodule Mix.Tasks.PetalComponents.Css.Docs do
   @moduledoc false
 
   @spec short_doc() :: String.t()
@@ -8,7 +8,7 @@ defmodule Mix.Tasks.PetalComponents.Css.Install.Docs do
 
   @spec example() :: String.t()
   def example do
-    "mix petal_components.css.install --example arg"
+    "mix petal_components.css --example arg"
   end
 
   @spec long_doc() :: String.t()
@@ -32,7 +32,7 @@ defmodule Mix.Tasks.PetalComponents.Css.Install.Docs do
 end
 
 if Code.ensure_loaded?(Igniter) do
-  defmodule Mix.Tasks.PetalComponents.Css.Install do
+  defmodule Mix.Tasks.PetalComponents.Css do
     @shortdoc "#{__MODULE__.Docs.short_doc()}"
 
     @moduledoc __MODULE__.Docs.long_doc()
@@ -99,7 +99,7 @@ if Code.ensure_loaded?(Igniter) do
           web_module_css(igniter, css_files)
         end
         |> PetalIgniter.Igniter.Templates.add_warnings_for_missing_css(
-          Path.join(@app_css, "petal_components"),
+          Path.join(@css_folder, "petal_components"),
           deps
         )
       else
@@ -170,7 +170,7 @@ if Code.ensure_loaded?(Igniter) do
     end
   end
 else
-  defmodule Mix.Tasks.PetalComponents.Css.Install do
+  defmodule Mix.Tasks.PetalComponents.Css do
     @shortdoc "#{__MODULE__.Docs.short_doc()} | Install `igniter` to use"
 
     @moduledoc __MODULE__.Docs.long_doc()
@@ -180,7 +180,7 @@ else
     @impl Mix.Task
     def run(_argv) do
       Mix.shell().error("""
-      The task 'petal_css.install' requires igniter. Please install igniter and try again.
+      The task 'petal_components.css' requires igniter. Please install igniter and try again.
 
       For more information, see: https://hexdocs.pm/igniter/readme.html#installation
       """)

@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.PetalComponents.Test.Install.Docs do
+defmodule Mix.Tasks.PetalComponents.Test.Docs do
   @moduledoc false
 
   @spec short_doc() :: String.t()
@@ -32,7 +32,7 @@ defmodule Mix.Tasks.PetalComponents.Test.Install.Docs do
 end
 
 if Code.ensure_loaded?(Igniter) do
-  defmodule Mix.Tasks.PetalComponents.Test.Install do
+  defmodule Mix.Tasks.PetalComponents.Test do
     @shortdoc "#{__MODULE__.Docs.short_doc()}"
 
     @moduledoc __MODULE__.Docs.long_doc()
@@ -132,7 +132,7 @@ if Code.ensure_loaded?(Igniter) do
     end
   end
 else
-  defmodule Mix.Tasks.PetalComponents.Test.Install do
+  defmodule Mix.Tasks.PetalComponents.Test do
     @shortdoc "#{__MODULE__.Docs.short_doc()} | Install `igniter` to use"
 
     @moduledoc __MODULE__.Docs.long_doc()
