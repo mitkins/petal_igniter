@@ -1,10 +1,10 @@
-# PetalIgniter
+# Petal Igniter
 
 Prototype to enable Igniter for Petal Components.
 
-## Reasoning
+## Goals
 
-The goal is to achieve the following:
+The primay goal of this prototype is to achieve the following:
 
 ```bash
 # From within an existing project
@@ -20,11 +20,11 @@ And if you wanted to install a subset of components:
 mix petal_components.install -c button -c alert
 ```
 
-A secondary goal of this prototype will be to achieve backwards compatibility with the existing library. Though that would mean you could reference the library to access components, but it also means that GitHub Actions, accessibility and code coverage could continue as originally designed.
+A secondary goal of this prototype will be to achieve backwards compatibility with the existing library. Though not strictly necessary, it does mean that users can use the updated version of Petal Components library without Igniter. It also means that GitHub Actions, accessibility and code coverage could continue with minimal adjustments.
 
 NB - the investigation into backwards compatibility is more of an exploration than a recommendation.
 
-## Quick Test
+## Simple Demo
 
 In this repo, make a change to `priv/templates/component/button.ex`. Then run:
 
@@ -32,11 +32,17 @@ In this repo, make a change to `priv/templates/component/button.ex`. Then run:
 mix petal_components.install --lib
 ```
 
-Changes will be reflected in `lib/petal_igniter/button.ex`.
+Changes will be reflected in `lib/petal_igniter/button.ex`. For more information about the `--lib` switch - see the Switches section (below)
 
-## Basic Design
+You can check how your changes have affected the button component by running:
 
-At it's heart, each component is broken down into 3 files - a component, a test and a css file. For example, when using Igniter to generate the button component inside a Phoenix app, here are the default locations for each file:
+```bash
+mix test
+```
+
+## Basic Premise
+
+At it's heart, each component is broken down into 3 files - a component, a test and a css file. For example, when using Igniter to generate the button component inside a Phoenix web app, here are the default locations for each file:
 
 * `lib/your_project_web/components/petal_components/button.ex`
 * `test/your_project_web/components/petal_components/button_test.exs`
@@ -61,11 +67,11 @@ In some cases, there is no test or css file. Also, there is a file (`PaginationI
 Igniter tasks are as follows:
 
 * `petal_components.install.ex` - this is the main mix task, curently it sets up depedencies, generates the main component files and composes sub-tasks
-* `petal_components.css.install.ex` - generates css files for components and supporting css files. Integrates with `app.css`
+* `petal_components.css.install.ex` - generates component css files and other supporting files. Integrates Petal Components css with with `app.css`
 * `petal_components.test.install.ex` - generates test files for components and supporting test files
 * `petal_components.use.ex` - generates `petal_components.ex` and integrates its use into the web application
-* `petal.tailwind.install.ex` - a general Igniter task to add install and configure Tailwind 4 for a web app
-* `petal.heroicons.install.ex` - a general Igniter task to add heroicons dependency and install the Tailwind heroicons javascript file
+* `petal.tailwind.install.ex` - a general Igniter task to install and configure Tailwind 4 for a web app
+* `petal.heroicons.install.ex` - a general Igniter task to add heroicons dependency and install the Tailwind heroicons javascript plugin
 
 You can call each Igniter task individually if you wish. Only `petal_components.install.ex` orchestrates the other tasks
 
@@ -87,7 +93,7 @@ Tasks will generate files for a library instead of an app. This is used to gener
 -c component_name
 ```
 
-Use this to generate specific components. Use the switch multiple times for multiple components
+Use this to nominate specific components. Use the switch multiple times for multiple components
 
 ```bash
 --do-deps
@@ -107,7 +113,7 @@ Controls whether a component generates Alpine.js or plain javascript. This is a 
 
 ## Output
 
-In the case of a web app, Igniter will generate Petal Components inside the users project. Giving them their own copy. They can adjust Petal Components as they see fit. If the user wishes, they could re-generate part or all of Petal Components over their existing project - the choice is theirs. For example, if there was a new component in a future release of Petal Components - they could just generate that one component.
+In the case of a web app, Igniter will generate Petal Components inside the users project. Giving them their own copy. They can adjust Petal Components as they see fit. If the user wishes, they could re-generate part or all of Petal Components over their existing project - the choice is theirs. For example, if there was a new component in a future release of Petal Components - they could selectively generate that one component.
 
 In the case of the `--lib` option, files are generated for the Petal Components library. This means that the templates are "the one true source" for both the Petal Components library and the components generated inside a users web app. After updating a component, typically you'd run the following command:
 
@@ -125,7 +131,7 @@ The other major change introduced by this prototype is the development process. 
 
 ## Breaking Changes
 
-One of the goals of this prototype is to generate files for the library such that files are on-parity with their original counterparts. However, one complication was the `default_js_lib` mechanism that's built into `lib/petal_components.ex` (in the Petal Components repo). You either support this option at runtime or at generation time. Supporting both scenarios simultaneously is tedious. 
+One of the goals of this prototype is to generate files for the library such that they are on-parity with their original counterparts. However, one complication was the `default_js_lib` mechanism that's built into `lib/petal_components.ex` (in the Petal Components repo). You either support this option at runtime or at generation time. Supporting both scenarios simultaneously is tedious. 
 
 This prototype supports "at generation" time - which means when the library is generated it either supports Alpine or plain javascript - but not both. 
 
