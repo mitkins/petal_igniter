@@ -1,6 +1,6 @@
 # Petal Igniter
 
-Prototype to enable Igniter for Petal Components.
+Prototype to test using Igniter with Petal Components.
 
 ## Goals
 
@@ -22,7 +22,7 @@ mix petal_components.install -c button -c alert
 
 A secondary goal of this prototype is to achieve backwards compatibility with the existing library. Though not strictly necessary, it does mean that users can use the updated version of Petal Components library without Igniter. It also means that GitHub Actions, accessibility and code coverage can continue with minimal adjustments.
 
-NB - the investigation into backwards compatibility is more of an exploration than a recommendation.
+NB - the investigation is less of a suggestion and more of an exploration.
 
 ## Simple Demo
 
@@ -48,7 +48,7 @@ At it's heart, each component is broken down into 3 files - a component, a test 
 * `test/your_project_web/components/petal_components/button_test.exs`
 * `assets/css/petal_components/button.css`
 
-Each file is generated from an EEx template. EEx templates can be found in this project under `/priv/templates` in one of three folders - `component`, `test` or `css`. For example, the source templates for the button conponent are:
+Each file is generated from an EEx template. EEx templates can be found in this project under `/priv/templates` in one of three folders - `component`, `test` or `css`. For example, the source templates for the button component are:
 
 * `priv/templates/components/button.ex`
 * `priv/templates/test/button_test.exs`
@@ -115,13 +115,15 @@ Controls whether a component generates Alpine.js or plain javascript. This is a 
 
 In the case of a web app, Igniter will generate Petal Components inside the users project. Giving them their own copy. They can adjust Petal Components as they see fit. If the user wishes, they could re-generate part or all of Petal Components over their existing project - the choice is theirs. For example, if there was a new component in a future release of Petal Components - they could selectively generate that one component.
 
-In the case of the `--lib` option, files are generated for the Petal Components library. This means that the templates are "the one true source" for both the Petal Components library and the components generated inside a users web app. After updating a template, typically you'd run the following command:
+In the case of the `--lib` option, files are generated for the Petal Components library. After updating a template, typically you'd run the following command:
 
 ```bash
 mix petal_components.install --lib
 ```
 
 This would update the generated/static files for the library - including the tests - and would be committed to the repo. This also means that GitHub Actions would work as they were originally designed.
+
+Effectively, templates become "the one true source" for both the Petal Components library and the components generated inside a users web app. 
 
 ## Major Changes
 
