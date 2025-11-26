@@ -36,7 +36,7 @@ defmodule PetalIgniter.MixProject do
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_live_view, "~> 1.0"},
       {:phoenix, "~> 1.7"},
-      {:igniter, "~> 0.6", only: [:dev, :test], optional: true}
+      {:igniter, "~> 0.7", only: [:dev, :test], optional: true}
     ]
   end
 
