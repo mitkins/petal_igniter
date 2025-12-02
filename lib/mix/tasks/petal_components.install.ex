@@ -101,11 +101,8 @@ if Code.ensure_loaded?(Igniter) do
 
         module_prefix = PetalIgniter.Igniter.Module.remove_prefix(petal_module)
 
-        helpers_template =
-          PetalIgniter.Igniter.Project.component_template(igniter, "_helpers.ex")
-
-        helpers_file =
-          PetalIgniter.Igniter.Module.proper_location(igniter, petal_module, Helpers)
+        helpers_template = PetalIgniter.Igniter.Project.component_template(igniter, "_helpers.ex")
+        helpers_file = PetalIgniter.Igniter.Module.proper_location(igniter, petal_module, Helpers)
 
         components = PetalIgniter.Mix.Components.components(component_names)
 
@@ -122,8 +119,7 @@ if Code.ensure_loaded?(Igniter) do
 
         # Do your work here and return an updated igniter
         igniter
-        |> Igniter.Project.Deps.add_dep({:phoenix, "~> 1.7"})
-        |> Igniter.Project.Deps.add_dep({:phoenix_live_view, "~> 1.0"})
+        |> Igniter.Project.Deps.add_dep({:phoenix_live_view, "~> 1.1"})
         |> Igniter.Project.Deps.add_dep({:phoenix_ecto, "~> 4.4"})
         |> Igniter.Project.Deps.add_dep({:phoenix_html_helpers, "~> 1.0"})
         |> Igniter.Project.Deps.add_dep({:lazy_html, ">= 0.0.0", only: :test})
@@ -133,22 +129,24 @@ if Code.ensure_loaded?(Igniter) do
         |> Igniter.copy_template(helpers_template, helpers_file, [module_prefix: module_prefix],
           on_exists: :overwrite
         )
-        |> PetalIgniter.Igniter.Templates.reduce_into(components, fn {module, file},
-                                                                     acc_igniter ->
-          component_template =
-            PetalIgniter.Igniter.Project.component_template(acc_igniter, file)
+        |> PetalIgniter.Igniter.Templates.reduce_into(
+          components,
+          fn {module, file}, acc_igniter ->
+            component_template =
+              PetalIgniter.Igniter.Project.component_template(acc_igniter, file)
 
-          component_file =
-            PetalIgniter.Igniter.Module.proper_location(acc_igniter, petal_module, module)
+            component_file =
+              PetalIgniter.Igniter.Module.proper_location(acc_igniter, petal_module, module)
 
-          acc_igniter
-          |> Igniter.copy_template(
-            component_template,
-            component_file,
-            [module_prefix: module_prefix, js_lib: acc_igniter.args.options[:js_lib]],
-            on_exists: :overwrite
-          )
-        end)
+            acc_igniter
+            |> Igniter.copy_template(
+              component_template,
+              component_file,
+              [module_prefix: module_prefix, js_lib: acc_igniter.args.options[:js_lib]],
+              on_exists: :overwrite
+            )
+          end
+        )
         |> Igniter.compose_task("petal_components.use")
         |> Igniter.compose_task("petal_components.test")
         |> PetalIgniter.Igniter.Templates.add_warnings_for_missing_deps(petal_module, deps)
