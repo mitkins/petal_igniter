@@ -17,6 +17,11 @@ defmodule Mix.Tasks.PetalComponents.Install.Docs do
     #{short_doc()}
 
     Installs Petal Components and their dependencies into your Phoenix project.
+
+    This task handles the complete setup process, including installing Heroicons,
+    configuring Tailwind CSS, generating CSS files, creating tests and
+    copying/integrating component files to your project.
+
     You can optionally specify which components to install using the --component flag.
     If no components are specified, all available components will be installed.
 
