@@ -8,7 +8,7 @@ defmodule Mix.Tasks.PetalComponents.Install.Docs do
 
   @spec example() :: String.t()
   def example do
-    "mix petal_components.install --component button --component dropdown"
+    "mix petal_components.install"
   end
 
   @spec long_doc() :: String.t()
@@ -26,7 +26,13 @@ defmodule Mix.Tasks.PetalComponents.Install.Docs do
     #{example()}
     ```
 
-    Or using the short alias:
+    Install specific components:
+
+    ```sh
+    mix petal_components.install --component button --component dropdown
+    ```
+
+    Using the short alias:
 
     ```sh
     mix petal_components.install -c button -c dropdown
@@ -35,7 +41,7 @@ defmodule Mix.Tasks.PetalComponents.Install.Docs do
     ## Options
 
     * `--component` or `-c` - Specify component(s) to install (can be used multiple times)
-    * `--lib` - Install components in lib instead of web
+    * `--lib` - Install components in lib instead of web (useful for library projects)
     * `--js-lib` - JavaScript library to use (default: alpine_js)
     """
   end

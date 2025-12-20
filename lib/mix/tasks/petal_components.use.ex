@@ -3,12 +3,12 @@ defmodule Mix.Tasks.PetalComponents.Use.Docs do
 
   @spec short_doc() :: String.t()
   def short_doc do
-    "A short description of your task"
+    "Add Petal Components to your web module"
   end
 
   @spec example() :: String.t()
   def example do
-    "mix petal_components.install --example arg"
+    "mix petal_components.use"
   end
 
   @spec long_doc() :: String.t()
@@ -16,7 +16,10 @@ defmodule Mix.Tasks.PetalComponents.Use.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
+    Adds the Petal Components module to your web module's html_helpers/0
+    function, making all public components available throughout your
+    application. This task updates your web module to use the PetalComponents
+    module and optionally filters which components are included.
 
     ## Example
 
@@ -24,9 +27,22 @@ defmodule Mix.Tasks.PetalComponents.Use.Docs do
     #{example()}
     ```
 
+    To include only specific components:
+
+    ```sh
+    mix petal_components.use --component button --component dropdown
+    ```
+
+    Using the short alias:
+
+    ```sh
+    mix petal_components.use -c button -c dropdown
+    ```
+
     ## Options
 
-    * `--example-option` or `-e` - Docs for your option
+    * `--component` or `-c` - Specify component(s) to include (can be used multiple times)
+    * `--lib` - Skip updating the web module (useful when components are in lib)
     """
   end
 end

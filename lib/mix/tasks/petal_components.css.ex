@@ -3,12 +3,12 @@ defmodule Mix.Tasks.PetalComponents.Css.Docs do
 
   @spec short_doc() :: String.t()
   def short_doc do
-    "A short description of your task"
+    "Install CSS files for Petal Components"
   end
 
   @spec example() :: String.t()
   def example do
-    "mix petal_components.css --example arg"
+    "mix petal_components.css"
   end
 
   @spec long_doc() :: String.t()
@@ -16,7 +16,11 @@ defmodule Mix.Tasks.PetalComponents.Css.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
+    Installs CSS files for Petal Components into your project. You can
+    optionally specify which components to install using the --component flag.
+    If no components are specified, CSS for all available components will be
+    installed. CSS files are placed in assets/css/petal_components/ and
+    automatically imported into your main CSS file.
 
     ## Example
 
@@ -24,9 +28,23 @@ defmodule Mix.Tasks.PetalComponents.Css.Docs do
     #{example()}
     ```
 
+    Install CSS for specific components:
+
+    ```sh
+    mix petal_components.css --component button --component dropdown
+    ```
+
+    Using the short alias:
+
+    ```sh
+    mix petal_components.css -c button -c dropdown
+    ```
+
     ## Options
 
-    * `--example-option` or `-e` - Docs for your option
+    * `--component` or `-c` - Specify component(s) to install CSS for (can be used multiple times)
+    * `--lib` - Install CSS in lib instead of web (useful for library projects)
+    * `--no-deps` - Skip installing CSS for component dependencies
     """
   end
 end
