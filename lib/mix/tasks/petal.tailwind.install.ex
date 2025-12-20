@@ -80,7 +80,7 @@ if Code.ensure_loaded?(Igniter) do
         igniter
       else
         igniter
-        |> Igniter.Project.Deps.add_dep(
+        |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep(
           {:tailwind, "~> 0.4", runtime: Sourceror.parse_string!("Mix.env() == :dev")}
         )
         |> tailwind4_config(app_name)

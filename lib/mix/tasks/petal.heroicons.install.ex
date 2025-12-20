@@ -77,11 +77,11 @@ if Code.ensure_loaded?(Igniter) do
     def igniter(igniter) do
       # Do your work here and return an updated igniter
       igniter
-      |> Igniter.Project.Deps.add_dep(
+      |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep(
         {:heroicons,
          [
            github: "tailwindlabs/heroicons",
-           tag: "v2.1.5",
+           tag: "v2.2.0",
            sparse: "optimized",
            app: false,
            compile: false,

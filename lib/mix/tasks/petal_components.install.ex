@@ -119,9 +119,9 @@ if Code.ensure_loaded?(Igniter) do
 
         # Do your work here and return an updated igniter
         igniter
-        |> Igniter.Project.Deps.add_dep({:phoenix_live_view, "~> 1.1"})
-        |> Igniter.Project.Deps.add_dep({:phoenix_ecto, "~> 4.4"})
-        |> Igniter.Project.Deps.add_dep({:phoenix_html_helpers, "~> 1.0"})
+        |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:phoenix_live_view, "~> 1.1"})
+        |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:phoenix_ecto, "~> 4.4"})
+        |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:phoenix_html_helpers, "~> 1.0"})
         |> Igniter.Project.Deps.add_dep({:lazy_html, ">= 0.0.0", only: :test})
         |> Igniter.compose_task("petal.heroicons.install")
         |> Igniter.compose_task("petal.tailwind.install")
