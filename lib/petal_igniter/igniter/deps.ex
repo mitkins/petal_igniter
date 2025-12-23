@@ -56,6 +56,29 @@ defmodule PetalIgniter.Igniter.Project.Deps do
 
   defp min_from_requirement!("~> " <> rest), do: normalize_min(rest)
   defp min_from_requirement!(">= " <> rest), do: normalize_min(rest)
+  defp min_from_requirement!("== " <> rest), do: normalize_min(rest)
+
+  defp min_from_requirement!(req) when is_binary(req) do
+    cond do
+      String.contains?(req, " or ") ->
+        # Compound requirement, e.g. "~> 1.0 or ~> 2.0" – take the first disjunct
+        String.split(req, " or ", parts: 2)
+        |> hd()
+        |> String.trim()
+        |> min_from_requirement!()
+
+      String.contains?(req, " and ") ->
+        # Compound requirement, e.g. "~> 1.0 and <= 2.0" – take the first disjunct
+        String.split(req, " and ", parts: 2)
+        |> hd()
+        |> String.trim()
+        |> min_from_requirement!()
+
+      true ->
+        # Unsupported format
+        raise ArgumentError, "Unsupported version requirement format: #{inspect(req)}"
+    end
+  end
 
   defp normalize_min(v) do
     parts = String.split(v, ".") |> Enum.map(&String.to_integer/1)
