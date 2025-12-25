@@ -38,7 +38,6 @@ defmodule PetalIgniter.Igniter.Project.DepsTest do
       test_project()
       |> Igniter.Project.Deps.add_dep({:some_dep, "~> 1.0"})
       |> Igniter.apply_func_with_return(Deps, :check_and_add_dep, [{:some_dep, "~> 1.0"}])
-      # Should not modify the dependency
       |> assert_has_patch("mix.exs", """
         {:some_dep, "~> 1.0"}
       """)
