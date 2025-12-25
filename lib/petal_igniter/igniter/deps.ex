@@ -1,4 +1,31 @@
 defmodule PetalIgniter.Igniter.Project.Deps do
+  @moduledoc """
+  Utilities for inspecting and modifying project dependencies in an Igniter project.
+
+  Main difference between this and Igniter.Project.Deps is that it will only add
+  the dependency if it doesn't exist or it is a higher version.
+  """
+
+  @doc """
+  Ensures a dependency is present in the project without downgrading its version.
+  Given an `igniter` project context and a dependency tuple, this function:
+
+  * Looks up the existing dependency by name in the project
+  * Compares the minimum version implied by the existing requirement with the
+    minimum version implied by the desired requirement
+  * Adds or updates the dependency via `Igniter.Project.Deps.add_dep/3` only if
+    the desired requirement requires a strictly newer minimum version
+  * Leaves the project unchanged if the existing requirement is equal to or
+    newer than the desired one
+  * Records an issue on the `igniter` via `Igniter.add_issue/2` if the existing
+    dependency cannot be retrieved or parsed
+
+  The `dep` argument is expected to be either `{name, requirement}` or
+  `{name, requirement, dep_opts}`, where `name` is an atom and `requirement`
+  is a version requirement string.
+
+  Returns the (possibly updated) `igniter` project context.
+  """
   def check_and_add_dep(igniter, dep, opts \\ []) do
     {name, desired_req} = name_and_req(dep)
 
