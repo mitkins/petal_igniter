@@ -81,7 +81,7 @@ defmodule PetalIgniter.Igniter.Project.Deps do
   end
 
   defp normalize_min(v) do
-    parts = String.split(v, ".") |> Enum.map(&String.to_integer/1)
+    parts = String.split(v, ".")
 
     case parts do
       [maj] -> "#{maj}.0.0"
