@@ -29,7 +29,9 @@ defmodule PetalIgniter.Igniter.Project.Deps do
   def check_and_add_dep(igniter, dep, opts \\ []) do
     {name, desired_req} = name_and_req(dep)
 
-    with {:ok, {_found_name, found_req}} when is_binary(found_req) <- get_dep(igniter, name) do
+    with {:ok, found_dep} <- get_dep(igniter, name),
+         {_found_name, found_req} <- name_and_req(found_dep),
+         true <- is_binary(found_req) do
       # Check minimum version here and balk if there's an issue
       found_min = min_from_requirement!(found_req)
       desired_min = min_from_requirement!(desired_req)
@@ -65,10 +67,8 @@ defmodule PetalIgniter.Igniter.Project.Deps do
   defp get_dep(igniter, name) do
     case Igniter.Project.Deps.get_dep(igniter, name) do
       {:ok, dep_string} when is_binary(dep_string) ->
-        case Code.string_to_quoted(dep_string) do
-          {:ok, quoted_dep} -> {:ok, quoted_dep}
-          {:error, reason} -> {:error, {:parse_error, reason}}
-        end
+        {dep, _binding} = Code.eval_string(dep_string)
+        {:ok, dep}
 
       {:ok, nil} ->
         {:error, :not_found}
@@ -81,30 +81,31 @@ defmodule PetalIgniter.Igniter.Project.Deps do
   defp name_and_req({name, req}), do: {name, req}
   defp name_and_req({name, req, _req_opts}), do: {name, req}
 
-  defp min_from_requirement!("~> " <> rest), do: normalize_min(rest)
-  defp min_from_requirement!(">= " <> rest), do: normalize_min(rest)
-  defp min_from_requirement!("== " <> rest), do: normalize_min(rest)
-
   defp min_from_requirement!(req) when is_binary(req) do
     cond do
       String.contains?(req, " or ") ->
-        # Compound requirement, e.g. "~> 1.0 or ~> 2.0" – take the first disjunct
         String.split(req, " or ", parts: 2)
         |> hd()
         |> String.trim()
         |> min_from_requirement!()
 
       String.contains?(req, " and ") ->
-        # Compound requirement, e.g. "~> 1.0 and <= 2.0" – take the first disjunct
         String.split(req, " and ", parts: 2)
         |> hd()
         |> String.trim()
         |> min_from_requirement!()
 
       true ->
-        # Unsupported format
-        raise ArgumentError, "Unsupported version requirement format: #{inspect(req)}"
+        parse_simple_requirement(req)
     end
+  end
+
+  defp parse_simple_requirement("~> " <> rest), do: normalize_min(rest)
+  defp parse_simple_requirement(">= " <> rest), do: normalize_min(rest)
+  defp parse_simple_requirement("== " <> rest), do: normalize_min(rest)
+
+  defp parse_simple_requirement(req) do
+    raise ArgumentError, "Unsupported version requirement format: #{inspect(req)}"
   end
 
   defp normalize_min(v) do
