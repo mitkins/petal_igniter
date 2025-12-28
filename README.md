@@ -151,7 +151,7 @@ Heroicons v1 will stay in the Petal Components library (i.e. won't be generated)
 
 Assuming that this prototype should be applied to Petal Components, the following work remains:
 
-* Implement recommended practices for Igniter task documentation
+* ~~Implement recommended practices for Igniter task documentation~~
 * Improve tests for Igniter Tasks
 * Merge work into Petal Components
 * Rework Petal Development

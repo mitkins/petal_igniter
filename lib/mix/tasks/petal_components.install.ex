@@ -8,7 +8,7 @@ defmodule Mix.Tasks.PetalComponents.Install.Docs do
 
   @spec example() :: String.t()
   def example do
-    "mix petal_components.install --component button --component dropdown"
+    "mix petal_components.install"
   end
 
   @spec long_doc() :: String.t()
@@ -17,6 +17,11 @@ defmodule Mix.Tasks.PetalComponents.Install.Docs do
     #{short_doc()}
 
     Installs Petal Components and their dependencies into your Phoenix project.
+
+    This task handles the complete setup process, including installing Heroicons,
+    configuring Tailwind CSS, generating CSS files, creating tests and
+    copying/integrating component files to your project.
+
     You can optionally specify which components to install using the --component flag.
     If no components are specified, all available components will be installed.
 
@@ -26,7 +31,13 @@ defmodule Mix.Tasks.PetalComponents.Install.Docs do
     #{example()}
     ```
 
-    Or using the short alias:
+    Install specific components:
+
+    ```sh
+    mix petal_components.install --component button --component dropdown
+    ```
+
+    Using the short alias:
 
     ```sh
     mix petal_components.install -c button -c dropdown
@@ -35,7 +46,7 @@ defmodule Mix.Tasks.PetalComponents.Install.Docs do
     ## Options
 
     * `--component` or `-c` - Specify component(s) to install (can be used multiple times)
-    * `--lib` - Install components in lib instead of web
+    * `--lib` - Install components in lib instead of web (useful for library projects)
     * `--js-lib` - JavaScript library to use (default: alpine_js)
     """
   end
@@ -101,11 +112,8 @@ if Code.ensure_loaded?(Igniter) do
 
         module_prefix = PetalIgniter.Igniter.Module.remove_prefix(petal_module)
 
-        helpers_template =
-          PetalIgniter.Igniter.Project.component_template(igniter, "_helpers.ex")
-
-        helpers_file =
-          PetalIgniter.Igniter.Module.proper_location(igniter, petal_module, Helpers)
+        helpers_template = PetalIgniter.Igniter.Project.component_template(igniter, "_helpers.ex")
+        helpers_file = PetalIgniter.Igniter.Module.proper_location(igniter, petal_module, Helpers)
 
         components = PetalIgniter.Mix.Components.components(component_names)
 
@@ -122,10 +130,9 @@ if Code.ensure_loaded?(Igniter) do
 
         # Do your work here and return an updated igniter
         igniter
-        |> Igniter.Project.Deps.add_dep({:phoenix, "~> 1.7"})
-        |> Igniter.Project.Deps.add_dep({:phoenix_live_view, "~> 1.0"})
-        |> Igniter.Project.Deps.add_dep({:phoenix_ecto, "~> 4.4"})
-        |> Igniter.Project.Deps.add_dep({:phoenix_html_helpers, "~> 1.0"})
+        |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:phoenix_live_view, "~> 1.1"})
+        |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:phoenix_ecto, "~> 4.4"})
+        |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:phoenix_html_helpers, "~> 1.0"})
         |> Igniter.Project.Deps.add_dep({:lazy_html, ">= 0.0.0", only: :test})
         |> Igniter.compose_task("petal.heroicons.install")
         |> Igniter.compose_task("petal.tailwind.install")
@@ -133,22 +140,24 @@ if Code.ensure_loaded?(Igniter) do
         |> Igniter.copy_template(helpers_template, helpers_file, [module_prefix: module_prefix],
           on_exists: :overwrite
         )
-        |> PetalIgniter.Igniter.Templates.reduce_into(components, fn {module, file},
-                                                                     acc_igniter ->
-          component_template =
-            PetalIgniter.Igniter.Project.component_template(acc_igniter, file)
+        |> PetalIgniter.Igniter.Templates.reduce_into(
+          components,
+          fn {module, file}, acc_igniter ->
+            component_template =
+              PetalIgniter.Igniter.Project.component_template(acc_igniter, file)
 
-          component_file =
-            PetalIgniter.Igniter.Module.proper_location(acc_igniter, petal_module, module)
+            component_file =
+              PetalIgniter.Igniter.Module.proper_location(acc_igniter, petal_module, module)
 
-          acc_igniter
-          |> Igniter.copy_template(
-            component_template,
-            component_file,
-            [module_prefix: module_prefix, js_lib: acc_igniter.args.options[:js_lib]],
-            on_exists: :overwrite
-          )
-        end)
+            acc_igniter
+            |> Igniter.copy_template(
+              component_template,
+              component_file,
+              [module_prefix: module_prefix, js_lib: acc_igniter.args.options[:js_lib]],
+              on_exists: :overwrite
+            )
+          end
+        )
         |> Igniter.compose_task("petal_components.use")
         |> Igniter.compose_task("petal_components.test")
         |> PetalIgniter.Igniter.Templates.add_warnings_for_missing_deps(petal_module, deps)

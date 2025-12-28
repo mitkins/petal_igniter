@@ -3,12 +3,12 @@ defmodule Mix.Tasks.PetalComponents.Test.Docs do
 
   @spec short_doc() :: String.t()
   def short_doc do
-    "A short description of your task"
+    "Generate test files for Petal Components"
   end
 
   @spec example() :: String.t()
   def example do
-    "mix petal_components.install --example arg"
+    "mix petal_components.test"
   end
 
   @spec long_doc() :: String.t()
@@ -16,7 +16,11 @@ defmodule Mix.Tasks.PetalComponents.Test.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
+    Generates test files for Petal Components in your test directory. You can
+    optionally specify which components to generate tests for using the
+    --component flag. If no components are specified, tests for all available
+    components will be generated. This task also creates a ComponentCase
+    support module for testing components.
 
     ## Example
 
@@ -24,9 +28,24 @@ defmodule Mix.Tasks.PetalComponents.Test.Docs do
     #{example()}
     ```
 
+    Generate tests for specific components:
+
+    ```sh
+    mix petal_components.test --component button --component dropdown
+    ```
+
+    Using the short alias:
+
+    ```sh
+    mix petal_components.test -c button -c dropdown
+    ```
+
     ## Options
 
-    * `--example-option` or `-e` - Docs for your option
+    * `--component` or `-c` - Specify component(s) to generate tests for (can be used multiple times)
+    * `--lib` - Generate tests in lib instead of web (useful for library projects)
+    * `--no-deps` - Skip generating tests for component dependencies
+    * `--js-lib` - JavaScript library to use (default: alpine_js)
     """
   end
 end

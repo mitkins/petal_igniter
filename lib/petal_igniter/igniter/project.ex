@@ -3,13 +3,15 @@ defmodule PetalIgniter.Igniter.Project do
   def priv_dir(igniter, subpath \\ []) do
     # App path always overrides library path. Unless you're using the --lib option - where the lib _is_
     # the app
-    app_path = Igniter.Project.Application.priv_dir(igniter, subpath)
+    app_path =
+      Igniter.Project.Application.priv_dir(igniter, subpath)
 
     # But only if the path/file exists
     if File.exists?(app_path) do
       app_path
     else
-      Path.join(["_build/#{Mix.env()}/lib/", to_string(:petal_components), "priv"] ++ subpath)
+      lib_name = Application.get_application(__MODULE__)
+      Path.join(["_build/#{Mix.env()}/lib/", to_string(lib_name), "priv"] ++ subpath)
     end
   end
 

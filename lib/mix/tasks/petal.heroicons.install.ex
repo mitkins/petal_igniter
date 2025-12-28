@@ -3,12 +3,12 @@ defmodule Mix.Tasks.Petal.Heroicons.Install.Docs do
 
   @spec short_doc() :: String.t()
   def short_doc do
-    "A short description of your task"
+    "Install Heroicons SVG library and configure Tailwind"
   end
 
   @spec example() :: String.t()
   def example do
-    "mix petal_components.install --example arg"
+    "mix petal.heroicons.install"
   end
 
   @spec long_doc() :: String.t()
@@ -16,7 +16,10 @@ defmodule Mix.Tasks.Petal.Heroicons.Install.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
+    Installs the Heroicons SVG library from Tailwind Labs and configures it
+    for use with your Tailwind CSS setup. This task adds the Heroicons
+    dependency and creates the necessary Tailwind configuration to include
+    Heroicons in your project.
 
     ## Example
 
@@ -24,9 +27,15 @@ defmodule Mix.Tasks.Petal.Heroicons.Install.Docs do
     #{example()}
     ```
 
+    To install only the library without CSS configuration:
+
+    ```sh
+    mix petal.heroicons.install --lib
+    ```
+
     ## Options
 
-    * `--example-option` or `-e` - Docs for your option
+    * `--lib` - Install only the library dependency without CSS configuration (useful for library projects)
     """
   end
 end
@@ -81,7 +90,7 @@ if Code.ensure_loaded?(Igniter) do
         {:heroicons,
          [
            github: "tailwindlabs/heroicons",
-           tag: "v2.1.5",
+           tag: "v2.2.0",
            sparse: "optimized",
            app: false,
            compile: false,

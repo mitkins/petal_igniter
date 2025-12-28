@@ -3,12 +3,12 @@ defmodule Mix.Tasks.Petal.Tailwind.Install.Docs do
 
   @spec short_doc() :: String.t()
   def short_doc do
-    "A short description of your task"
+    "Install and configure Tailwind CSS v4"
   end
 
   @spec example() :: String.t()
   def example do
-    "mix petal_components.install --example arg"
+    "mix petal.tailwind.install"
   end
 
   @spec long_doc() :: String.t()
@@ -16,7 +16,10 @@ defmodule Mix.Tasks.Petal.Tailwind.Install.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
+    Installs the Tailwind CSS v4 dependency and configures it for your
+    Phoenix project. This task adds the tailwind package and sets up the
+    necessary configuration in your config.exs file, including the Tailwind
+    version, input/output paths, and working directory.
 
     ## Example
 
@@ -24,9 +27,15 @@ defmodule Mix.Tasks.Petal.Tailwind.Install.Docs do
     #{example()}
     ```
 
+    To install only the library without configuration:
+
+    ```sh
+    mix petal.tailwind.install --lib
+    ```
+
     ## Options
 
-    * `--example-option` or `-e` - Docs for your option
+    * `--lib` - Install only the library dependency without configuration (useful for library projects)
     """
   end
 end
@@ -80,7 +89,7 @@ if Code.ensure_loaded?(Igniter) do
         igniter
       else
         igniter
-        |> Igniter.Project.Deps.add_dep(
+        |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep(
           {:tailwind, "~> 0.4", runtime: Sourceror.parse_string!("Mix.env() == :dev")}
         )
         |> tailwind4_config(app_name)
