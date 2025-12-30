@@ -128,8 +128,12 @@ if Code.ensure_loaded?(Igniter) do
             Enum.uniq(components ++ deps)
           end
 
-        # Do your work here and return an updated igniter
+        valid_js_lib = PetalIgniter.Igniter.Templates.valid_js_lib(igniter.args.options[:js_lib])
+
         igniter
+        |> PetalIgniter.Igniter.Templates.add_warning_for_invalid_js_lib(
+          igniter.args.options[:js_lib] != valid_js_lib
+        )
         |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:phoenix_live_view, "~> 1.1"})
         |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:phoenix_ecto, "~> 4.4"})
         |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:phoenix_html_helpers, "~> 1.0"})
@@ -153,7 +157,7 @@ if Code.ensure_loaded?(Igniter) do
             |> Igniter.copy_template(
               component_template,
               component_file,
-              [module_prefix: module_prefix, js_lib: acc_igniter.args.options[:js_lib]],
+              [module_prefix: module_prefix, js_lib: valid_js_lib],
               on_exists: :overwrite
             )
           end
