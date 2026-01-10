@@ -2,6 +2,8 @@ defmodule Mix.Tasks.PetalComponents.InstallTest do
   use ExUnit.Case, async: true
   import Igniter.Test
 
+  @moduletag :igniter
+
   describe "basic functionality" do
     test "installs all components with --lib flag" do
       test_project(app_name: :my_lib)

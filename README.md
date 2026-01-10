@@ -125,6 +125,22 @@ This would update the generated/static files for the library - including the tes
 
 Effectively, templates become "the one true source" for both the Petal Components library and the components generated inside a users web app. 
 
+## Testing
+
+Igniter tests exhibit the following behaviours:
+
+* An Igniter project is kept in-memory for the duration of a test
+* Igniter tests generate templates from the file system
+* Igniter uses Sourcerer to modify code - which is CPU intensive 
+
+Basically, Igniter tests are integration tests. For this reason, the Igniter tests have been marked with a tag and excluded by default. You can run Igniter tests with:
+
+```bash
+mix test --include igniter
+```
+
+It would be prudent to run Igniter tests in the CI/CD pipeline.
+
 ## Major Changes
 
 In this prototype, css has been re-organised. CSS for each component is in its own file. So instead of a singular monolith css file - component files are imported (into `default.css` for the Petal Components library or `petal_components.css` when it's generated for a web app). Thanks to Tailwind 4, imported files are ultimately merged into a single css file.
@@ -152,7 +168,7 @@ Heroicons v1 will stay in the Petal Components library (i.e. won't be generated)
 Assuming that this prototype should be applied to Petal Components, the following work remains:
 
 * ~~Implement recommended practices for Igniter task documentation~~
-* Improve tests for Igniter Tasks
+* ~~Improve tests for Igniter Tasks~~
 * Merge work into Petal Components
 * Rework Petal Development
 * It needs some real world testing

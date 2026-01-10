@@ -2,6 +2,8 @@ defmodule Mix.Tasks.PetalComponents.TestTest do
   use ExUnit.Case, async: true
   import Igniter.Test
 
+  @moduletag :igniter
+
   describe "basic functionality" do
     test "generates component_case support module" do
       test_project(app_name: :my_app)

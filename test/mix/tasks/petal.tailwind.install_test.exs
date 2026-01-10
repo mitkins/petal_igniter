@@ -3,6 +3,8 @@ defmodule Mix.Tasks.Petal.Tailwind.InstallTest do
   import Igniter.Test
   import PetalIgniter.Igniter.Test
 
+  @moduletag :igniter
+
   describe "basic functionality" do
     test "adds tailwind dependency" do
       test_project(app_name: :my_app)

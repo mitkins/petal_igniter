@@ -3,6 +3,8 @@ defmodule Mix.Tasks.PetalComponents.UseTest do
   import Igniter.Test
   import PetalIgniter.Igniter.Test
 
+  @moduletag :igniter
+
   describe "basic functionality" do
     test "creates PetalComponents module file in correct location" do
       test_project(app_name: :my_app)

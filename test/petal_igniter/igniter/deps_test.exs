@@ -2,6 +2,8 @@ defmodule PetalIgniter.Igniter.Project.DepsTest do
   use ExUnit.Case, async: true
   import Igniter.Test
 
+  @moduletag :igniter
+
   describe "check_and_add_dep/3" do
     test "adds dependency when it doesn't exist" do
       test_project()

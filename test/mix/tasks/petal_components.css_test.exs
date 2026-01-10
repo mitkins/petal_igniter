@@ -2,6 +2,8 @@ defmodule Mix.Tasks.PetalComponents.CssTest do
   use ExUnit.Case, async: true
   import Igniter.Test
 
+  @moduletag :igniter
+
   describe "basic functionality" do
     test "generates CSS files for all components by default" do
       test_project(app_name: :my_app)
