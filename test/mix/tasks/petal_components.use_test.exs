@@ -28,7 +28,7 @@ defmodule Mix.Tasks.PetalComponents.UseTest do
         |  import PetalComponents.Button
       """)
       |> refute_has_patch("lib/my_app_web/components/petal_components.ex", """
-        |  import PetalComponents.Accordian
+        |  import PetalComponents.Accordion
       """)
     end
 
