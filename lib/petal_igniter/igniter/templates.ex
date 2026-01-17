@@ -43,4 +43,16 @@ defmodule PetalIgniter.Igniter.Templates do
       )
     end)
   end
+
+  def valid_js_lib("live_view_js"), do: "live_view_js"
+  def valid_js_lib(_), do: "alpine_js"
+
+  def add_warning_for_invalid_js_lib(igniter, true),
+    do:
+      Igniter.add_warning(
+        igniter,
+        "Unknown option '#{igniter.args.options[:js_lib]}' - valid arguments for js_lib are 'alpine_js' and 'live_view_js'"
+      )
+
+  def add_warning_for_invalid_js_lib(igniter, _invalid), do: igniter
 end

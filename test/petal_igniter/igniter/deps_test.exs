@@ -2,6 +2,8 @@ defmodule PetalIgniter.Igniter.Project.DepsTest do
   use ExUnit.Case, async: true
   import Igniter.Test
 
+  @moduletag :igniter
+
   describe "check_and_add_dep/3" do
     test "adds dependency when it doesn't exist" do
       test_project()
@@ -37,7 +39,7 @@ defmodule PetalIgniter.Igniter.Project.DepsTest do
       |> Igniter.Project.Deps.add_dep({:some_dep, "~> 1.0"})
       |> apply_igniter!()
       |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:some_dep, "~> 1.0"}, yes?: true)
-      |> assert_has_patch("mix.exs", "")
+      |> assert_unchanged("mix.exs")
     end
 
     test "handles >= version requirements" do
@@ -165,7 +167,7 @@ defmodule PetalIgniter.Igniter.Project.DepsTest do
       |> Igniter.Project.Deps.add_dep({:some_dep, "~> 3.0"})
       |> apply_igniter!()
       |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:some_dep, "~> 1.0"}, yes?: true)
-      |> assert_has_patch("mix.exs", "")
+      |> assert_unchanged("mix.exs")
     end
 
     test "prevents downgrade from higher to lower minor version" do
@@ -173,7 +175,7 @@ defmodule PetalIgniter.Igniter.Project.DepsTest do
       |> Igniter.Project.Deps.add_dep({:some_dep, "~> 1.5"})
       |> apply_igniter!()
       |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:some_dep, "~> 1.3"}, yes?: true)
-      |> assert_has_patch("mix.exs", "")
+      |> assert_unchanged("mix.exs")
     end
 
     test "prevents downgrade from higher to lower patch version" do
@@ -181,7 +183,7 @@ defmodule PetalIgniter.Igniter.Project.DepsTest do
       |> Igniter.Project.Deps.add_dep({:some_dep, "~> 1.2.5"})
       |> apply_igniter!()
       |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:some_dep, "~> 1.2.3"}, yes?: true)
-      |> assert_has_patch("mix.exs", "")
+      |> assert_unchanged("mix.exs")
     end
 
     test "handles mix of version requirement types" do
@@ -245,7 +247,7 @@ defmodule PetalIgniter.Igniter.Project.DepsTest do
       |> PetalIgniter.Igniter.Project.Deps.check_and_add_dep({:some_dep, "~> 1.0.0-alpha"},
         yes?: true
       )
-      |> assert_has_patch("mix.exs", "")
+      |> assert_unchanged("mix.exs")
     end
   end
 end

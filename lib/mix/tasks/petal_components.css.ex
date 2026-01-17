@@ -110,7 +110,6 @@ if Code.ensure_loaded?(Igniter) do
             Enum.uniq(css_files ++ deps)
           end
 
-        # Do your work here and return an updated igniter
         if igniter.args.options[:lib] do
           library_css(igniter, css_files)
         else

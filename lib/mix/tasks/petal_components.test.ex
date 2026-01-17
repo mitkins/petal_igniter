@@ -121,8 +121,12 @@ if Code.ensure_loaded?(Igniter) do
             Enum.uniq(tests ++ deps)
           end
 
-        # Do your work here and return an updated igniter
+        valid_js_lib = PetalIgniter.Igniter.Templates.valid_js_lib(igniter.args.options[:js_lib])
+
         igniter
+        |> PetalIgniter.Igniter.Templates.add_warning_for_invalid_js_lib(
+          igniter.args.options[:js_lib] != valid_js_lib
+        )
         |> Igniter.copy_template(
           component_case_template,
           "test/support/component_case.ex",
@@ -139,7 +143,7 @@ if Code.ensure_loaded?(Igniter) do
           |> Igniter.copy_template(
             test_template,
             test_file,
-            [module_prefix: module_prefix, js_lib: igniter.args.options[:js_lib]],
+            [module_prefix: module_prefix, js_lib: valid_js_lib],
             on_exists: :overwrite
           )
         end)

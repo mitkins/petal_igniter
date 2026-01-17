@@ -84,7 +84,6 @@ if Code.ensure_loaded?(Igniter) do
     def igniter(igniter) do
       app_name = Igniter.Project.Application.app_name(igniter)
 
-      # Do your work here and return an updated igniter
       if igniter.args.options[:lib] do
         igniter
       else
@@ -110,10 +109,10 @@ if Code.ensure_loaded?(Igniter) do
         [app_name, :args],
         {:code,
          Sourceror.parse_string!("""
-           ~w(
-              --input=assets/css/app.css
-              --output=priv/static/assets/app.css
-            )
+         ~w(
+          --input=assets/css/app.css
+          --output=priv/static/assets/css/app.css
+         )
          """)}
       )
       |> Igniter.Project.Config.configure(

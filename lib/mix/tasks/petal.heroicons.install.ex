@@ -84,7 +84,6 @@ if Code.ensure_loaded?(Igniter) do
 
     @impl Igniter.Mix.Task
     def igniter(igniter) do
-      # Do your work here and return an updated igniter
       igniter
       |> Igniter.Project.Deps.add_dep(
         {:heroicons,
