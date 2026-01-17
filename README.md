@@ -131,7 +131,7 @@ Igniter tests exhibit the following behaviours:
 
 * An Igniter project is kept in-memory for the duration of a test
 * Igniter tests generate templates from the file system
-* Igniter uses Sourcerer to modify code - which is CPU intensive 
+* Igniter uses Sourceror to modify code - which is CPU intensive 
 
 Basically, Igniter tests are integration tests. For this reason, the Igniter tests have been marked with a tag and excluded by default. You can run Igniter tests with:
 
